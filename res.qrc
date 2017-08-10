@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/form">
+        <file>bottleDialog.ui</file>
+        <file>queryForm.ui</file>
+        <file>domaineForm.ui</file>
+        <file>wineForm.ui</file>
+    </qresource>
+</RCC>
