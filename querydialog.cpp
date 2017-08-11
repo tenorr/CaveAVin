@@ -1,6 +1,7 @@
 #include "querydialog.h"
 #include <QDebug>
 
+
 QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     :QDialog(parent,f)
 {
@@ -212,7 +213,10 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
     dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
-    dialogButtonBox->addButton(tr("Show"),QDialogButtonBox::ActionRole);
+    // Create Button to handle it
+    QPushButton *button = new QPushButton(tr("Show"));
+    button->setObjectName("showButton");
+    dialogButtonBox->addButton(button,QDialogButtonBox::ActionRole);
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);

@@ -57,7 +57,7 @@ void WineQueryDialog::on_queryComboBox_currentIndexChanged(int index)
 
 void WineQueryDialog::doAction(QAbstractButton *button)
 {
-    if ((button->text() == tr("Show")) || (button->text() == tr("Create"))) {
+ if (dialogButtonBox()->buttonRole(button) == QDialogButtonBox::ActionRole) {
         // Do nothing if show and no selected item
         if ((button->text() == tr("Show")) && (selectedId()==-1))
             return;
