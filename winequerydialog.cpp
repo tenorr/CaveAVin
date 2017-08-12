@@ -1,4 +1,5 @@
 #include "winequerydialog.h"
+#include <QDebug>
 
 WineQueryDialog::WineQueryDialog(QString domaineStr, QString wineStr, QSqlDatabase db, QWidget *parent, Qt::WindowFlags f)
     :QueryDialog(parent,f)
@@ -57,20 +58,17 @@ void WineQueryDialog::on_queryComboBox_currentIndexChanged(int index)
 
 void WineQueryDialog::doAction(QAbstractButton *button)
 {
- if (dialogButtonBox()->buttonRole(button) == QDialogButtonBox::ActionRole) {
-        // Do nothing if show and no selected item
-        if ((button->text() == tr("Show")) && (selectedId()==-1))
-            return;
+    if (dialogButtonBox()->buttonRole(button) == QDialogButtonBox::ActionRole) {
 
-        // Retrieve selected Id
-        int sId = (button->text() == tr("Create"))? -1: selectedId();
-        WineDialog *dialog = new WineDialog(wineModel()->database(),sId);
-        if (dialog->exec() == QDialog::Accepted) {
-            model()->select();
-            selectRowId(dialog->getId());
-        }
-        dialog->deleteLater();
-    }
+           // Retrieve selected Id
+           int sId = (button->text() == tr("Create"))? -1: selectedId();
+           WineDialog *dialog = new WineDialog(wineModel()->database(),sId);
+            dialog->exec();
+            // Reselect and update view
+              model()->select();
+              selectRowId(dialog->getId());
+           dialog->deleteLater();
+       }
 
 }
 

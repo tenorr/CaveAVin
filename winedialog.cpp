@@ -10,6 +10,7 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
 
     // Set Initial Data
     populateCombo("Type","Type","Wine_Type");
+    populateCombo("Region","Region","Region");
     populateAppelationCombo();
     setInitialData(selectedId);
 
@@ -48,7 +49,26 @@ void WineDialog::populateAppelationCombo(int wineTypeId)
     populateCombo("Appelation","Appelation","Appelation",filter);
     // Restore Appelation Name, if possible
     if(!str.isEmpty())
-         combo()[indexOf("Appelation")]->setCurrentText(str);
+        combo()[indexOf("Appelation")]->setCurrentText(str);
+}
+
+void WineDialog::setAppellationFields()
+{
+    // Retrieve Appelation Id
+    QString AppelationStr = combo().at(indexOf("Appelation"))->currentText();
+    // Look at special character
+    AppelationStr = AppelationStr.replace("'","''");
+    QSqlQuery query;
+    query.prepare(QString("SELECT a.Region, a.Couleur, t.Type FROM Appelation AS a "
+                          "INNER JOIN Appelation_Type AS t ON t.Id = a.type "
+                          "WHERE a.Appelation = '%1'").arg(AppelationStr));
+    query.exec();
+    if (query.first()) {
+        lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());
+        combo().at(indexOf("Region"))->setCurrentIndex(query.value("Region").toInt());
+        combo().at(indexOf("Type"))->setCurrentIndex(query.value("Couleur").toInt());
+        populateAppelationCombo(query.value("Couleur").toInt());
+        }
 }
 
 void WineDialog::setInitialData(int id)
@@ -66,10 +86,8 @@ void WineDialog::setInitialData(int id)
     else
         lineEdit().at(indexOf("Domaine"))->clear();
 
-   // Populate the appelation Combo with Filter
-    int wineTypeId = combo().at(indexOf("Type"))->currentIndex();
-    if (wineTypeId !=0)
-       populateAppelationCombo(wineTypeId);
+   // Set the appelation fields and Populate the appelation Combo with Filter
+    setAppellationFields();
 }
 
 void WineDialog::doAction(QAbstractButton *button)
@@ -127,7 +145,31 @@ void WineDialog::on_domaineButton_clicked()
 
 void WineDialog::on_appelationButton_clicked()
 {
+    AppelationQueryDialog *dialog = new AppelationQueryDialog(combo().at(indexOf("Appelation"))->currentText(),wineModel()->database());
+    if (dialog->exec() == QDialog::Accepted)
+       // lineEdit().at(indexOf("Domaine"))->setText(dialog->selectedName());
+        dialog->deleteLater();
+}
 
+void WineDialog::on_appelationComboBox_activated(int index)
+{
+    if (index >0)
+        setAppellationFields();
+}
+
+void WineDialog::on_appelationComboBox_currentIndexChanged(int index)
+{
+    if (index == 0) {
+        combo().at(indexOf("Region"))->setCurrentIndex(0);
+        lineEdit().at(indexOf("AppelationType"))->clear();
+    }
+}
+
+void WineDialog::on_regionComboBox_activated(int index)
+{
+    if (index !=-1) {
+       // populateCombo();
+    }
 }
 
 void WineDialog::on_typeComboBox_activated(int index)

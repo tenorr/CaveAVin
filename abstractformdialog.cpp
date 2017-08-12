@@ -42,32 +42,38 @@ int AbstractFormDialog::indexOf(const QString &text)
 
     for(int i=0,n=lineEdit().size();i<n;i++) {
         objectName = lineEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("LineEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     for (int i=0,n=combo().size();i<n;i++) {
         objectName = combo().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("ComboBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     for(int i=0,n=textEdit().size();i<n;i++) {
         objectName = textEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("TextEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     for(int i=0,n=spinBox().size();i<n;i++) {
         objectName = spinBox().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("SpinBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     for(int i=0,n=doubleSpinBox().size();i<n;i++) {
         objectName = doubleSpinBox().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("DoubleSpinBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     for(int i=0,n=dateEdit().size();i<n;i++) {
         objectName = dateEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("DateEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
     return -1;
@@ -76,37 +82,41 @@ int AbstractFormDialog::indexOf(const QString &text)
 AbstractFormDialog::WidgetType AbstractFormDialog::typeOf(const QString &text)
 {
     QString objectName;
-
     for(int i=0,n=lineEdit().size();i<n;i++) {
         objectName = lineEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("LineEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return LineEdit;}
 
     for (int i=0,n=combo().size();i<n;i++) {
         objectName = combo().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("ComboBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return ComboBox;}
 
     for(int i=0,n=textEdit().size();i<n;i++) {
         objectName = textEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("TextEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return TextEdit;}
 
     for(int i=0,n=spinBox().size();i<n;i++) {
         objectName = spinBox().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("SpinBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return SpinBox;}
 
     for(int i=0,n=doubleSpinBox().size();i<n;i++) {
         objectName = doubleSpinBox().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
+        objectName.chop(QString("DoubleSpinBox").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return DoubleSpinBox;}
 
     for(int i=0,n=dateEdit().size();i<n;i++) {
         objectName = dateEdit().at(i)->objectName();
-        if (objectName.startsWith(text,Qt::CaseInsensitive))
-            return DateEdit;}
-
+        objectName.chop(QString("DateEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
+              return DateEdit;}
     return Unknown;
 }
 

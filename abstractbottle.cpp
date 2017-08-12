@@ -159,7 +159,8 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
         rec.setValue("Wine",dialog->wineId());
 
         index = dialog->index("Millesime");
-        rec.setValue("Millesime",dialog->spinBox().at(index)->value());
+        int millesime = dialog->combo().at(index)->currentText().toInt();
+        rec.setValue("Millesime",millesime);
 
         index = dialog->index("PurchaseLocation");
         rec.setValue("Purchase_Location",dialog->lineEdit().at(index)->text());

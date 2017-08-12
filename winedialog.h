@@ -3,6 +3,7 @@
 
 #include "abstractmodelformdialog.h"
 #include "domainequerydialog.h"
+#include "appelationquerydialog.h"
 #include "regionquerydialog.h"
 #include "winemodel.h"
 
@@ -22,12 +23,16 @@ private slots:
     void doAction(QAbstractButton *button);
     void on_domaineButton_clicked();
     void on_appelationButton_clicked();
+    void on_appelationComboBox_activated(int index);
+    void on_appelationComboBox_currentIndexChanged(int index);
+    void on_regionComboBox_activated(int index);
     void on_typeComboBox_activated(int index);
 
 private:
     WineModel *wineModel() const;
     int domaineId(const QString &text, bool &fUnique);
     void populateAppelationCombo(int wineTypeId=0);
+    void setAppellationFields();
 
 };
 
