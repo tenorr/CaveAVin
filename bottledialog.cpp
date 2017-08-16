@@ -64,6 +64,14 @@ void BottleDialog::on_wineNameButton_clicked()
             lineEdit().at(indexOf("WineName"))->setText(str);
             lineEdit().at(indexOf("Winery"))->setText(dialog->selectedStringField("Domaine"));
             lineEdit().at(indexOf("WineId"))->setText(dialog->selectedStringField("Id"));
+        // Retrieve appelation
+            QSqlQuery query;
+            query.prepare(QString("SELECT a.Appelation, t.type FROM Appelation AS a "
+                                  "INNER JOIN Appelation_Type AS t ON a.Type = t.Id WHERE a.ID = %1").arg(dialog->selectedIntField("Appelation")));
+            query.exec();
+            if (query.first()) {
+                lineEdit().at(indexOf("Appelation"))->setText(query.value("Appelation").toString());
+                lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());}
             fConnectWineId = true;
         }
     }

@@ -63,12 +63,12 @@ void WineQueryDialog::doAction(QAbstractButton *button)
            // Retrieve selected Id
            int sId = (button->text() == tr("Create"))? -1: selectedId();
            WineDialog *dialog = new WineDialog(wineModel()->database(),sId);
-            dialog->exec();
-            // Reselect and update view
-              model()->select();
-              selectRowId(dialog->getId());
-           dialog->deleteLater();
-       }
+           dialog->exec();
 
+            // Reselect and update view
+           wineModel()->select();
+           selectRowId(dialog->getId());
+           dialog->deleteLater();
+         }
 }
 
