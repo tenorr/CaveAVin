@@ -64,6 +64,14 @@ void BottleDialog::on_wineNameButton_clicked()
             lineEdit().at(indexOf("WineName"))->setText(str);
             lineEdit().at(indexOf("Winery"))->setText(dialog->selectedStringField("Domaine"));
             lineEdit().at(indexOf("WineId"))->setText(dialog->selectedStringField("Id"));
+        // Retrieve appelation
+            QSqlQuery query;
+            query.prepare(QString("SELECT a.Appelation, t.type FROM Appelation AS a "
+                                  "INNER JOIN Appelation_Type AS t ON a.Type = t.Id WHERE a.ID = %1").arg(dialog->selectedIntField("Appelation")));
+            query.exec();
+            if (query.first()) {
+                lineEdit().at(indexOf("Appelation"))->setText(query.value("Appelation").toString());
+                lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());}
             fConnectWineId = true;
         }
     }
@@ -130,12 +138,23 @@ void BottleDialog::setInitialData(QSqlRecord rec)
 {
     fConnectWineId = false;
 
-    //Initialise LineEdits
+    //Initialise Widgets
     lineEdit().at(indexOf("Bottle"))->setText(QString::number(rec.value("Id").toInt()));
     lineEdit().at(indexOf("PurchaseLocation"))->setText(rec.value("Purchase_Location").toString());
-    spinBox().at(indexOf("Millesime"))->setValue(rec.value("Millesime").toInt());
     doubleSpinBox().at(indexOf("PurchasePrice"))->setValue(rec.value("Purchase_Price").toDouble());
     dateEdit().at(indexOf("PurchaseDate"))->setDate((rec.value("Purchase_Date").toDateTime()).date());
+
+     // Initialise Millesime Combo
+     // Find current Date and build from today downto 1900 years
+
+    int yearIndex = QDate::currentDate().year();
+    QStringList yearList;
+    yearList << "";
+    while (yearIndex>=1900)
+        yearList.append(QString::number(yearIndex--));
+    combo().at(indexOf("Millesime"))->addItems(yearList);
+    int millesime = rec.value("Millesime").toInt();
+    combo().at(indexOf("Millesime"))->setCurrentText((millesime==0)? "" : QString::number(millesime));
 
     // Set Data From Wine Table if any
     int wineId = rec.value("Wine").toInt();

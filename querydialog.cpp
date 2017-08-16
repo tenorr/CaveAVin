@@ -1,6 +1,7 @@
 #include "querydialog.h"
 #include <QDebug>
 
+
 QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     :QDialog(parent,f)
 {
@@ -11,6 +12,8 @@ QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     setQueryLineEdit();
     setQueryCombo();
     setDialogButtonBox(findChild<QDialogButtonBox*>("buttonBox"));
+
+
 }
 
 
@@ -36,6 +39,7 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
 {
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
+    connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
     m_model = model;
 }
 
@@ -169,6 +173,12 @@ void QueryDialog::setLabelText(const QStringList &textList)
      view()->resize(view()->size()+QSize(0,moveStep));
 }
 
+void QueryDialog::setEnabledShowButton(bool fEnabled)
+{
+    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>("showButton");
+    button->setEnabled(fEnabled);
+}
+
 void QueryDialog::hideQueryRow(int index)
 {
     // Get number of LineEdit Rows
@@ -204,6 +214,12 @@ bool QueryDialog::rowIsHidden(int index)
     return queryLabel().at(index)->isHidden();
 }
 
+void QueryDialog::onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    setEnabledShowButton(selected != QItemSelection());
+    Q_UNUSED(deselected)
+}
+
 QDialogButtonBox *QueryDialog::dialogButtonBox() const
 {
     return m_dialogButtonBox;
@@ -212,7 +228,11 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
     dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
-    dialogButtonBox->addButton(tr("Show"),QDialogButtonBox::ActionRole);
+    // Create Button to handle it
+    QPushButton *button = new QPushButton(tr("Show"));
+    button->setObjectName("showButton");
+    button->setDisabled(true);
+    dialogButtonBox->addButton(button,QDialogButtonBox::ActionRole);
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);

@@ -10,6 +10,7 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QTableView>
 #include <QComboBox>
 #include <QGroupBox>
@@ -58,11 +59,16 @@ protected:
     void populateCombo(const QString &fieldName, const QString &tableName, int comboIndex=0);
     void selectRowId(int id);
     void setLabelText(const QStringList &textList);
+    void setEnabledShowButton(bool fEnabled);
 
 private:
     void hideQueryRow(int index);
     void moveRow(int index, int lag);
     bool rowIsHidden(int index);
+
+public slots:
+    void onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
 
 protected:
     QList<QLineEdit *> m_queryLineEdit;

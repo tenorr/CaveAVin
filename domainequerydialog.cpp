@@ -18,9 +18,6 @@ DomaineQueryDialog::DomaineQueryDialog(QString domaineStr, QSqlDatabase db, QWid
     // Populate Country Combo
     populateCombo("Country","Country");
 
-   // queryLabel().at(2)->move(queryLabel().at(1)->pos());
-   // queryCombo().at(0)->move(queryLineEdit().at(1)->pos());
-
     // Field to be return
     setSelectedFieldName("Domaine");
 
@@ -61,9 +58,6 @@ void DomaineQueryDialog::doAction(QAbstractButton *button)
 {
     if (dialogButtonBox()->buttonRole(button) != QDialogButtonBox::ActionRole)
         return;
-        // Do nothing if show and no selected item
-        if ((button->text() == tr("Show")) && (selectedId()==-1))
-            return;
 
         // Retrieve selected Id
         int sId = (button->text() == tr("Create"))? -1: selectedId();
