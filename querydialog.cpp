@@ -38,14 +38,7 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
     connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
-<<<<<<< HEAD
-<<<<<<< HEAD
     connect(view()->model(),&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
-=======
->>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
-=======
-    connect(view()->model(),&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
     m_model = model;
 }
 
@@ -181,10 +174,6 @@ void QueryDialog::setLabelText(const QStringList &textList)
      view()->resize(view()->size()+QSize(0,moveStep));
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
 void QueryDialog::setEnabledButtons(bool fEnabled)
 {
     QPushButton *showButton = dialogButtonBox()->findChild<QPushButton *>("showButton");
@@ -194,23 +183,10 @@ void QueryDialog::setEnabledButtons(bool fEnabled)
 }
 
 void QueryDialog::hideButton(QString buttonName)
-<<<<<<< HEAD
 {
     QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
     if (button)
         button->hide();
-=======
-void QueryDialog::setEnabledShowButton(bool fEnabled)
-{
-    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>("showButton");
-    button->setEnabled(fEnabled);
->>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
-=======
-{
-    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
-    if (button)
-        button->hide();
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
 }
 
 void QueryDialog::hideQueryRow(int index)
@@ -250,8 +226,6 @@ bool QueryDialog::rowIsHidden(int index)
 
 void QueryDialog::onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
     // Enable buttons if selection
     setEnabledButtons(selected != QItemSelection());
     Q_UNUSED(deselected)
@@ -263,25 +237,6 @@ void QueryDialog::onViewModelAboutToBeReset()
     setEnabledButtons(false);
 }
 
-=======
-    setEnabledShowButton(selected != QItemSelection());
-    Q_UNUSED(deselected)
-}
-
->>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
-=======
-    // Enable buttons if selection
-    setEnabledButtons(selected != QItemSelection());
-    Q_UNUSED(deselected)
-}
-
-void QueryDialog::onViewModelAboutToBeReset()
-{
-    // Disabled buttons if Model is reset
-    setEnabledButtons(false);
-}
-
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
 QDialogButtonBox *QueryDialog::dialogButtonBox() const
 {
     return m_dialogButtonBox;
@@ -289,10 +244,6 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
     // Create Buttons to handle it
     QPushButton *createButton = new QPushButton(tr("Create"));
     createButton->setObjectName("createButton");
@@ -301,17 +252,6 @@ void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
     QPushButton *showButton = new QPushButton(tr("Show"));
     showButton->setObjectName("showButton");
     dialogButtonBox->addButton(showButton,QDialogButtonBox::ActionRole);
-<<<<<<< HEAD
-=======
-    dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
-    // Create Button to handle it
-    QPushButton *button = new QPushButton(tr("Show"));
-    button->setObjectName("showButton");
-    button->setDisabled(true);
-    dialogButtonBox->addButton(button,QDialogButtonBox::ActionRole);
->>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
-=======
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);
@@ -369,6 +309,7 @@ void QueryDialog::setShownFieldNames(const QStringList &shownFieldNames)
         if (index!=-1)
             view()->showColumn(index);
     }
+    view()->resizeColumnsToContents();
     m_shownFieldNames = shownFieldNames;
 }
 

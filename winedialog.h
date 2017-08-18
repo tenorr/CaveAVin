@@ -42,14 +42,7 @@ private:
     void populateAppelationCombo(int wineTypeId=0, int regionId=0);
     void setAppellationFields(int appelationId=0);
     void setActionButtonEnabled();
-<<<<<<< HEAD
-<<<<<<< HEAD
     void setCombosFromAppelationId(const int & appelationId);
-=======
->>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
-=======
-    void setCombosFromAppelationId(const int & appelationId);
->>>>>>> 1e5b9bc15264cd09de5567617338aa3a9b4bcf98
 
 };
 
