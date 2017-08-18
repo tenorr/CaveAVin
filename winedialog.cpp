@@ -23,8 +23,13 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
     setInitialData(selectedId);
     setActionButtonEnabled();
 
+<<<<<<< HEAD
  //  lineEdit().at(indexOf("AppelationId"))->hide();
  //  lineEdit().at(indexOf("DomaineId"))->hide();
+=======
+   lineEdit().at(indexOf("AppelationId"))->hide();
+   lineEdit().at(indexOf("DomaineId"))->hide();
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 
 }
 
@@ -213,6 +218,7 @@ void WineDialog::on_domaineLineEdit_textEdited(const QString &text)
 void WineDialog::on_appelationButton_clicked()
 {
     AppelationQueryDialog *dialog = new AppelationQueryDialog(combo().at(indexOf("Appelation"))->currentText(),wineModel()->database());
+<<<<<<< HEAD
     if (dialog->exec() == QDialog::Accepted) {
        int aId = dialog->selectedId();
        setCombosFromAppelationId(aId);
@@ -233,6 +239,25 @@ void WineDialog::on_appelationComboBox_activated(int index)
     }
 }
 
+=======
+    if (dialog->exec() == QDialog::Accepted)
+       // lineEdit().at(indexOf("Domaine"))->setText(dialog->selectedName());
+        dialog->deleteLater();
+}
+
+void WineDialog::on_appelationComboBox_activated(int index)
+{
+    if (index!=-1) {
+        int aId = appelationId();
+        if (aId !=0)
+            lineEdit().at(indexOf("AppelationId"))->setText(QString::number(aId));
+        else
+            lineEdit().at(indexOf("AppelationId"))->clear();
+        setAppellationFields(aId);
+    }
+}
+
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 void WineDialog::on_regionComboBox_activated(int index)
 {
     if (index !=-1)
@@ -263,6 +288,7 @@ void WineDialog::setActionButtonEnabled()
 {
     QPushButton *button = buttonBox()->findChild<QPushButton *>("actionButton");
     button->setEnabled(!lineEdit().at(indexOf("AppelationId"))->text().isEmpty() && !lineEdit().at(indexOf("DomaineId"))->text().isEmpty());
+<<<<<<< HEAD
 }
 
 void WineDialog::setCombosFromAppelationId(const int &appelationId)
@@ -300,4 +326,6 @@ void WineDialog::setCombosFromAppelationId(const int &appelationId)
         setAppellationFields(appelationId);}
 
      setActionButtonEnabled();
+=======
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 }

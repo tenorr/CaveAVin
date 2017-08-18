@@ -510,6 +510,7 @@
      </rect>
     </property>
    </widget>
+<<<<<<< HEAD
    <widget class="QLineEdit" name="domaineIdLineEdit">
     <property name="geometry">
      <rect>
@@ -531,6 +532,8 @@
      <bool>true</bool>
     </property>
    </widget>
+=======
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
   </widget>
  </widget>
  <resources/>

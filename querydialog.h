@@ -59,8 +59,12 @@ protected:
     void populateCombo(const QString &fieldName, const QString &tableName, int comboIndex=0);
     void selectRowId(int id);
     void setLabelText(const QStringList &textList);
+<<<<<<< HEAD
     void setEnabledButtons(bool fEnabled);
     void hideButton(QString buttonName);
+=======
+    void setEnabledShowButton(bool fEnabled);
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 
 private:
     void hideQueryRow(int index);
@@ -69,7 +73,11 @@ private:
 
 public slots:
     void onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+<<<<<<< HEAD
     void onViewModelAboutToBeReset();
+=======
+
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 
 protected:
     QList<QLineEdit *> m_queryLineEdit;

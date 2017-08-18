@@ -12,6 +12,8 @@ QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     setQueryLineEdit();
     setQueryCombo();
     setDialogButtonBox(findChild<QDialogButtonBox*>("buttonBox"));
+
+
 }
 
 
@@ -38,7 +40,10 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
     connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
+<<<<<<< HEAD
     connect(view()->model(),&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
+=======
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
     m_model = model;
 }
 
@@ -174,6 +179,7 @@ void QueryDialog::setLabelText(const QStringList &textList)
      view()->resize(view()->size()+QSize(0,moveStep));
 }
 
+<<<<<<< HEAD
 void QueryDialog::setEnabledButtons(bool fEnabled)
 {
     QPushButton *showButton = dialogButtonBox()->findChild<QPushButton *>("showButton");
@@ -187,6 +193,12 @@ void QueryDialog::hideButton(QString buttonName)
     QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
     if (button)
         button->hide();
+=======
+void QueryDialog::setEnabledShowButton(bool fEnabled)
+{
+    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>("showButton");
+    button->setEnabled(fEnabled);
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 }
 
 void QueryDialog::hideQueryRow(int index)
@@ -226,6 +238,7 @@ bool QueryDialog::rowIsHidden(int index)
 
 void QueryDialog::onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
+<<<<<<< HEAD
     // Enable buttons if selection
     setEnabledButtons(selected != QItemSelection());
     Q_UNUSED(deselected)
@@ -237,6 +250,12 @@ void QueryDialog::onViewModelAboutToBeReset()
     setEnabledButtons(false);
 }
 
+=======
+    setEnabledShowButton(selected != QItemSelection());
+    Q_UNUSED(deselected)
+}
+
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 QDialogButtonBox *QueryDialog::dialogButtonBox() const
 {
     return m_dialogButtonBox;
@@ -244,6 +263,7 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
+<<<<<<< HEAD
     // Create Buttons to handle it
     QPushButton *createButton = new QPushButton(tr("Create"));
     createButton->setObjectName("createButton");
@@ -252,6 +272,14 @@ void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
     QPushButton *showButton = new QPushButton(tr("Show"));
     showButton->setObjectName("showButton");
     dialogButtonBox->addButton(showButton,QDialogButtonBox::ActionRole);
+=======
+    dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
+    // Create Button to handle it
+    QPushButton *button = new QPushButton(tr("Show"));
+    button->setObjectName("showButton");
+    button->setDisabled(true);
+    dialogButtonBox->addButton(button,QDialogButtonBox::ActionRole);
+>>>>>>> 13a38975b8f291fdf31c9148c75c9275e83a612d
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);
