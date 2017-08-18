@@ -1,6 +1,7 @@
 #include "querydialog.h"
 #include <QDebug>
 
+
 QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     :QDialog(parent,f)
 {
@@ -36,6 +37,8 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
 {
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
+    connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
+    connect(view()->model(),&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
     m_model = model;
 }
 
@@ -137,23 +140,25 @@ void QueryDialog::setLabelText(const QStringList &textList)
    int maxSize=queryLabel().size();
    int lagArray[maxSize];
    int lag =0;
-   int iList=0;
+   int iList=-1;
    foreach (QString str, textList) {
+       iList++;
        if (str.isEmpty()) {
            hideQueryRow(iList);
            lag++;}
        else
         {queryLabel().at(iList)->setText(str);}
        lagArray[iList]=lag;
-       iList++;
     }
+
    // Hide unemployed widgets
-   for (int i=iList;i<maxSize;i++)
+   for (int i=iList+1;i<maxSize;i++)
        hideQueryRow(i);
 
    // Find the last shown widgets
    while ((rowIsHidden(iList)) && (iList>0))
        iList--;
+
     // Move shown widget
    while (iList>0) {
            moveRow(iList,lagArray[iList]);
@@ -167,6 +172,21 @@ void QueryDialog::setLabelText(const QStringList &textList)
     // Move view and resize
      view()->move(view()->pos() - QPoint(0,moveStep));
      view()->resize(view()->size()+QSize(0,moveStep));
+}
+
+void QueryDialog::setEnabledButtons(bool fEnabled)
+{
+    QPushButton *showButton = dialogButtonBox()->findChild<QPushButton *>("showButton");
+    showButton->setEnabled(fEnabled);
+    QPushButton *okButton = dialogButtonBox()->button(QDialogButtonBox::Ok);
+    okButton->setEnabled(fEnabled);
+}
+
+void QueryDialog::hideButton(QString buttonName)
+{
+    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
+    if (button)
+        button->hide();
 }
 
 void QueryDialog::hideQueryRow(int index)
@@ -204,6 +224,19 @@ bool QueryDialog::rowIsHidden(int index)
     return queryLabel().at(index)->isHidden();
 }
 
+void QueryDialog::onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    // Enable buttons if selection
+    setEnabledButtons(selected != QItemSelection());
+    Q_UNUSED(deselected)
+}
+
+void QueryDialog::onViewModelAboutToBeReset()
+{
+    // Disabled buttons if Model is reset
+    setEnabledButtons(false);
+}
+
 QDialogButtonBox *QueryDialog::dialogButtonBox() const
 {
     return m_dialogButtonBox;
@@ -211,12 +244,21 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
-    dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
-    dialogButtonBox->addButton(tr("Show"),QDialogButtonBox::ActionRole);
+    // Create Buttons to handle it
+    QPushButton *createButton = new QPushButton(tr("Create"));
+    createButton->setObjectName("createButton");
+    dialogButtonBox->addButton(createButton,QDialogButtonBox::ActionRole);
+
+    QPushButton *showButton = new QPushButton(tr("Show"));
+    showButton->setObjectName("showButton");
+    dialogButtonBox->addButton(showButton,QDialogButtonBox::ActionRole);
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);
-     m_dialogButtonBox = dialogButtonBox;
+    m_dialogButtonBox = dialogButtonBox;
+
+    // Disabled Ok and Show Buttons
+    setEnabledButtons(false);
 }
 
 QList<QLabel *> QueryDialog::queryLabel() const

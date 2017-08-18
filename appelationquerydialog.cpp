@@ -33,9 +33,14 @@ AppelationQueryDialog::AppelationQueryDialog(QString appelationStr, QSqlDatabase
 
     //Connect matching signals from form to slots of object
      QMetaObject::connectSlotsByName(this);
-     //connect(dialogButtonBox(),SIGNAL(clicked(QAbstractButton*)),this,SLOT(doAction(QAbstractButton*)));
 
-     // Select the Domaine if any
+     // Hide buttons
+     QStringList list {"createButton", "showButton"};
+     foreach (QString str, list) {
+         hideButton(str);
+     }
+
+     // Select the appelation if any
      appelationModel()->selectRecords(appelationStr);
 }
 

@@ -97,8 +97,8 @@ void ContainerScene::createBottle()
         rec.setValue("Id",newId);
         rec.setValue("Wine",dialog->wineId());
         int index = dialog->index("Millesime");
-        rec.setValue("Millesime",dialog->spinBox().at(index)->value());
-        //rec.setValue("Wine_Type",dialog->combo()->currentIndex());
+        int millesime = dialog->combo().at(index)->currentText().toInt();
+        rec.setValue("Millesime",millesime);
         rec.setValue("Container", id());
         rec.setValue("ContainerX",contextPosition().x());
         rec.setValue("ContainerY",contextPosition().y());
