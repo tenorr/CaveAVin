@@ -33,7 +33,7 @@ WineQueryDialog::WineQueryDialog(QString domaineStr, QString wineStr, QSqlDataba
      connect(dialogButtonBox(),SIGNAL(clicked(QAbstractButton*)),this,SLOT(doAction(QAbstractButton*)));
 
      // Select the Domaine if any
-     wineModel()->selectRecords(domaineStr);
+     wineModel()->selectRecords(domaineStr,wineStr);
 }
 
 WineModel *WineQueryDialog::wineModel() const
