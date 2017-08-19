@@ -33,10 +33,16 @@ AppelationQueryDialog::AppelationQueryDialog(QString appelationStr, QSqlDatabase
 
     //Connect matching signals from form to slots of object
      QMetaObject::connectSlotsByName(this);
-     //connect(dialogButtonBox(),SIGNAL(clicked(QAbstractButton*)),this,SLOT(doAction(QAbstractButton*)));
 
-     // Select the Domaine if any
+     // Hide buttons
+     QStringList list {"createButton", "showButton"};
+     foreach (QString str, list) {
+         hideButton(str);
+     }
+
+     // Select the appelation if any
      appelationModel()->selectRecords(appelationStr);
+     adjustViewSize();
 }
 
 AppelationModel *AppelationQueryDialog::appelationModel() const
@@ -52,6 +58,7 @@ void AppelationQueryDialog::on_queryLineEdit_textEdited(const QString &text)
      int wineTypeId = findWineTypeId(queryCombo().at(2)->currentText());
 
     appelationModel()->selectRecords(appelationStr,regionId,appelationTypeId,wineTypeId);
+    adjustViewSize();
 }
 
 void AppelationQueryDialog::on_queryComboBox_activated(const QString &text)
@@ -62,6 +69,7 @@ void AppelationQueryDialog::on_queryComboBox_activated(const QString &text)
     int appelationTypeId = findAppelationTypeId(queryCombo().at(1)->currentText());
     int wineTypeId = findWineTypeId(queryCombo().at(2)->currentText());
     appelationModel()->selectRecords(appelationStr,regionId,appelationTypeId,wineTypeId);
+    adjustViewSize();
 }
 
 void AppelationQueryDialog::on_queryComboBox2_activated(const QString &text)
@@ -72,6 +80,7 @@ void AppelationQueryDialog::on_queryComboBox2_activated(const QString &text)
     int appelationTypeId = findAppelationTypeId(text);
     int wineTypeId = findWineTypeId(queryCombo().at(2)->currentText());
     appelationModel()->selectRecords(appelationStr,regionId,appelationTypeId,wineTypeId);
+    adjustViewSize();
 }
 
 void AppelationQueryDialog::on_queryComboBox3_activated(const QString &text)
@@ -82,6 +91,7 @@ void AppelationQueryDialog::on_queryComboBox3_activated(const QString &text)
     int appelationTypeId = findAppelationTypeId(queryCombo().at(1)->currentText());
     int wineTypeId = findWineTypeId(text);
     appelationModel()->selectRecords(appelationStr,regionId,appelationTypeId,wineTypeId);
+    adjustViewSize();
 }
 
 int AppelationQueryDialog::findRegionId(const QString &text)

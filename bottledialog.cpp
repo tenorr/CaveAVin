@@ -11,6 +11,8 @@ BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidge
     setForm(":/form/bottleDialog.ui");
     setInitialData(rec);
 
+    lineEdit().at(indexOf("DomaineId"))->hide();
+
     // Create Dialog Buttons
     QString processText =(iProcess ==0)? tr("Create") : tr("Update");
     QPushButton *button = new QPushButton(processText);

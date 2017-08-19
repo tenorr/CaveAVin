@@ -12,21 +12,30 @@ QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
     setQueryLineEdit();
     setQueryCombo();
     setDialogButtonBox(findChild<QDialogButtonBox*>("buttonBox"));
-
-
 }
 
 
 QTableView *QueryDialog::view() const
 {
+
     return m_view;
 }
 
 void QueryDialog::setView(QTableView *view)
 {
+    // Set View Attributes
     view->setSelectionMode(QAbstractItemView::SingleSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+
+    QHeaderView *headerView = view->horizontalHeader();
+    headerView->setMinimumSectionSize(150);
+    headerView->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    viewWidth = view->width();
+    viewXPos = view->pos().x();
+
     m_view = view;
 }
 
@@ -40,6 +49,8 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
     connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
+    connect(model,&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
+    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(adjustViewSize()));
     m_model = model;
 }
 
@@ -102,6 +113,8 @@ void QueryDialog::setForm()
        setMinimumHeight(w->height());
        setMinimumWidth(w->width());
 
+       formWidth=w->width();
+
       // Create a layout and add the form
       QVBoxLayout * layout =new QVBoxLayout(this);
       layout->addWidget(w);
@@ -141,23 +154,25 @@ void QueryDialog::setLabelText(const QStringList &textList)
    int maxSize=queryLabel().size();
    int lagArray[maxSize];
    int lag =0;
-   int iList=0;
+   int iList=-1;
    foreach (QString str, textList) {
+       iList++;
        if (str.isEmpty()) {
            hideQueryRow(iList);
            lag++;}
        else
         {queryLabel().at(iList)->setText(str);}
        lagArray[iList]=lag;
-       iList++;
     }
+
    // Hide unemployed widgets
-   for (int i=iList;i<maxSize;i++)
+   for (int i=iList+1;i<maxSize;i++)
        hideQueryRow(i);
 
    // Find the last shown widgets
    while ((rowIsHidden(iList)) && (iList>0))
        iList--;
+
     // Move shown widget
    while (iList>0) {
            moveRow(iList,lagArray[iList]);
@@ -173,10 +188,41 @@ void QueryDialog::setLabelText(const QStringList &textList)
      view()->resize(view()->size()+QSize(0,moveStep));
 }
 
-void QueryDialog::setEnabledShowButton(bool fEnabled)
+void QueryDialog::setEnabledButtons(bool fEnabled)
 {
-    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>("showButton");
-    button->setEnabled(fEnabled);
+    QPushButton *showButton = dialogButtonBox()->findChild<QPushButton *>("showButton");
+    showButton->setEnabled(fEnabled);
+    QPushButton *okButton = dialogButtonBox()->button(QDialogButtonBox::Ok);
+    okButton->setEnabled(fEnabled);
+}
+
+void QueryDialog::hideButton(QString buttonName)
+{
+    QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
+    if (button)
+        button->hide();
+}
+
+void QueryDialog::adjustViewSize()
+{
+    resize(formWidth,height());
+    view()->move(viewXPos,view()->pos().y());
+
+    // Calculate total size of the view sections
+    QHeaderView *headerView = view()->horizontalHeader();
+    int sectionsSize = headerView->length() + view()->verticalHeader()->width() + 2* view()->frameWidth();
+    int viewHeight =view()->height();
+
+    if (sectionsSize < viewWidth) {
+        // Center the view changing its size if sections width is less than view size
+        view()->move(view()->pos() + QPoint((viewWidth-sectionsSize)/2,0));
+        view()->resize(sectionsSize,viewHeight);}
+    else {
+    // Change widget size if view is wider
+
+    int newSize = sectionsSize + viewXPos;
+    resize((newSize > formWidth)? newSize : formWidth,height());
+    view()->resize(sectionsSize,viewHeight);}
 }
 
 void QueryDialog::hideQueryRow(int index)
@@ -216,8 +262,15 @@ bool QueryDialog::rowIsHidden(int index)
 
 void QueryDialog::onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    setEnabledShowButton(selected != QItemSelection());
+    // Enable buttons if selection
+    setEnabledButtons(selected != QItemSelection());
     Q_UNUSED(deselected)
+}
+
+void QueryDialog::onViewModelAboutToBeReset()
+{
+    // Disabled buttons if Model is reset
+    setEnabledButtons(false);
 }
 
 QDialogButtonBox *QueryDialog::dialogButtonBox() const
@@ -227,16 +280,21 @@ QDialogButtonBox *QueryDialog::dialogButtonBox() const
 
 void QueryDialog::setDialogButtonBox(QDialogButtonBox *dialogButtonBox)
 {
-    dialogButtonBox->addButton(tr("Create"),QDialogButtonBox::ActionRole);
-    // Create Button to handle it
-    QPushButton *button = new QPushButton(tr("Show"));
-    button->setObjectName("showButton");
-    button->setDisabled(true);
-    dialogButtonBox->addButton(button,QDialogButtonBox::ActionRole);
+    // Create Buttons to handle it
+    QPushButton *createButton = new QPushButton(tr("Create"));
+    createButton->setObjectName("createButton");
+    dialogButtonBox->addButton(createButton,QDialogButtonBox::ActionRole);
+
+    QPushButton *showButton = new QPushButton(tr("Show"));
+    showButton->setObjectName("showButton");
+    dialogButtonBox->addButton(showButton,QDialogButtonBox::ActionRole);
 
     connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QueryDialog::accept);
     connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QueryDialog::reject);
-     m_dialogButtonBox = dialogButtonBox;
+    m_dialogButtonBox = dialogButtonBox;
+
+    // Disabled Ok and Show Buttons
+    setEnabledButtons(false);
 }
 
 QList<QLabel *> QueryDialog::queryLabel() const
@@ -285,8 +343,9 @@ void QueryDialog::setShownFieldNames(const QStringList &shownFieldNames)
     foreach (QString str, shownFieldNames) {
         int index = model()->fieldIndex(str);
         if (index!=-1)
-            view()->showColumn(index);
+            view()->showColumn(index);       
     }
+
     m_shownFieldNames = shownFieldNames;
 }
 
