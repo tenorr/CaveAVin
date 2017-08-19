@@ -17,14 +17,25 @@ QueryDialog::QueryDialog(QWidget *parent, Qt::WindowFlags f)
 
 QTableView *QueryDialog::view() const
 {
+
     return m_view;
 }
 
 void QueryDialog::setView(QTableView *view)
 {
+    // Set View Attributes
     view->setSelectionMode(QAbstractItemView::SingleSelection);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+
+    QHeaderView *headerView = view->horizontalHeader();
+    headerView->setMinimumSectionSize(150);
+    headerView->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    viewWidth = view->width();
+    viewXPos = view->pos().x();
+
     m_view = view;
 }
 
@@ -38,7 +49,8 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
     setView(findChild<QTableView *>("queryView"));
     view()->setModel(model);
     connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
-    connect(view()->model(),&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
+    connect(model,&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
+    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(adjustViewSize()));
     m_model = model;
 }
 
@@ -100,6 +112,8 @@ void QueryDialog::setForm()
 
        setMinimumHeight(w->height());
        setMinimumWidth(w->width());
+
+       formWidth=w->width();
 
       // Create a layout and add the form
       QVBoxLayout * layout =new QVBoxLayout(this);
@@ -187,6 +201,28 @@ void QueryDialog::hideButton(QString buttonName)
     QPushButton *button = dialogButtonBox()->findChild<QPushButton *>(buttonName);
     if (button)
         button->hide();
+}
+
+void QueryDialog::adjustViewSize()
+{
+    resize(formWidth,height());
+    view()->move(viewXPos,view()->pos().y());
+
+    // Calculate total size of the view sections
+    QHeaderView *headerView = view()->horizontalHeader();
+    int sectionsSize = headerView->length() + view()->verticalHeader()->width() + 2* view()->frameWidth();
+    int viewHeight =view()->height();
+
+    if (sectionsSize < viewWidth) {
+        // Center the view changing its size if sections width is less than view size
+        view()->move(view()->pos() + QPoint((viewWidth-sectionsSize)/2,0));
+        view()->resize(sectionsSize,viewHeight);}
+    else {
+    // Change widget size if view is wider
+
+    int newSize = sectionsSize + viewXPos;
+    resize((newSize > formWidth)? newSize : formWidth,height());
+    view()->resize(sectionsSize,viewHeight);}
 }
 
 void QueryDialog::hideQueryRow(int index)
@@ -307,9 +343,9 @@ void QueryDialog::setShownFieldNames(const QStringList &shownFieldNames)
     foreach (QString str, shownFieldNames) {
         int index = model()->fieldIndex(str);
         if (index!=-1)
-            view()->showColumn(index);
+            view()->showColumn(index);       
     }
-    view()->resizeColumnsToContents();
+
     m_shownFieldNames = shownFieldNames;
 }
 

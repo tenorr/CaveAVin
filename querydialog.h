@@ -11,14 +11,17 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QTableView>
 #include <QComboBox>
 #include <QGroupBox>
 #include <QSqlQuery>
+#include <QHeaderView>
+#include <QScrollBar>
+#include <QTableView>
 
 
 class QueryDialog : public QDialog
 {
+    Q_OBJECT
 public:
     QueryDialog(QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
 
@@ -61,6 +64,7 @@ protected:
     void setLabelText(const QStringList &textList);
     void setEnabledButtons(bool fEnabled);
     void hideButton(QString buttonName);
+    void adjustViewSize();
 
 private:
     void hideQueryRow(int index);
@@ -71,6 +75,7 @@ public slots:
     void onViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void onViewModelAboutToBeReset();
 
+
 protected:
     QList<QLineEdit *> m_queryLineEdit;
     QList<QLabel *> m_queryLabel;
@@ -80,6 +85,12 @@ protected:
     QString m_selectedFieldName;
     QStringList m_shownFieldNames;
     QDialogButtonBox * m_dialogButtonBox;
+
+private:
+    int formWidth;
+    int viewWidth;
+    int viewXPos;
+    int sectionsStart = 25;
 };
 
 #endif // QUERYDIALOG_H

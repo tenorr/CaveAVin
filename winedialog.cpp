@@ -23,8 +23,8 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
     setInitialData(selectedId);
     setActionButtonEnabled();
 
- //  lineEdit().at(indexOf("AppelationId"))->hide();
- //  lineEdit().at(indexOf("DomaineId"))->hide();
+   lineEdit().at(indexOf("AppelationId"))->hide();
+   lineEdit().at(indexOf("DomaineId"))->hide();
 
 }
 

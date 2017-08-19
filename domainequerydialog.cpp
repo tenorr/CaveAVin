@@ -25,9 +25,6 @@ DomaineQueryDialog::DomaineQueryDialog(QString domaineStr, QSqlDatabase db, QWid
     QStringList shownFieldNameList {"Domaine","Country"};
     setShownFieldNames(shownFieldNameList);
 
-    // Set the specific field size
-    setColumnWidth("Domaine",380);
-
     // Set the initial Domaine string
     queryLineEdit().at(0)->setText(domaineStr);
 
@@ -37,6 +34,7 @@ DomaineQueryDialog::DomaineQueryDialog(QString domaineStr, QSqlDatabase db, QWid
 
      // Select the Domaine if any
      domaineModel()->selectRecords(domaineStr);
+     adjustViewSize();
 }
 
 DomaineModel *DomaineQueryDialog::domaineModel() const
@@ -47,11 +45,13 @@ DomaineModel *DomaineQueryDialog::domaineModel() const
 void DomaineQueryDialog::on_queryLineEdit_textEdited(const QString &text)
 {
     domaineModel()->selectRecords(text,queryCombo().at(0)->currentIndex());
+    adjustViewSize();
 }
 
 void DomaineQueryDialog::on_queryComboBox_currentIndexChanged(int index)
 {
      domaineModel()->selectRecords(queryLineEdit().at(0)->text(),index);
+     adjustViewSize();
 }
 
 void DomaineQueryDialog::doAction(QAbstractButton *button)

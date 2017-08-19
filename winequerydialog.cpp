@@ -34,6 +34,7 @@ WineQueryDialog::WineQueryDialog(QString domaineStr, QString wineStr, QSqlDataba
 
      // Select the Domaine if any
      wineModel()->selectRecords(domaineStr,wineStr);
+     adjustViewSize();
 }
 
 WineModel *WineQueryDialog::wineModel() const
@@ -44,16 +45,19 @@ WineModel *WineQueryDialog::wineModel() const
 void WineQueryDialog::on_queryLineEdit_textEdited(const QString &text)
 {
     wineModel()->selectRecords(text,queryLineEdit().at(1)->text(), queryCombo().at(0)->currentIndex());
+    adjustViewSize();
 }
 
 void WineQueryDialog::on_queryLineEdit2_textEdited(const QString &text)
 {
     wineModel()->selectRecords(queryLineEdit().at(0)->text(),text, queryCombo().at(0)->currentIndex());
+    adjustViewSize();
 }
 
 void WineQueryDialog::on_queryComboBox_currentIndexChanged(int index)
 {
     wineModel()->selectRecords(queryLineEdit().at(0)->text(),queryLineEdit().at(1)->text(), index);
+    adjustViewSize();
 }
 
 void WineQueryDialog::doAction(QAbstractButton *button)
