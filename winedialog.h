@@ -36,6 +36,7 @@ private slots:
     void on_typeComboBox_activated(int index);
     void on_appelationIdLineEdit_textChanged(const QString &text);
     void on_domaineIdLineEdit_textChanged(const QString &text);
+    void on_grapeVarietyLineEdit_textChanged(const QString &text);
 
 private:
     WineModel *wineModel() const;
@@ -43,7 +44,6 @@ private:
     void setAppellationFields(int appelationId=0);
     void setActionButtonEnabled();
     void setCombosFromAppelationId(const int & appelationId);
-
 };
 
 #endif // WINEDIALOG_H
