@@ -4,7 +4,6 @@
 WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::WindowFlags f)
     :AbstractModelFormDialog(parent,f)
 {
-
     setWindowTitle(tr("Manage Wine"));
     setForm(":/form/wineForm.ui");
     setModel(new WineModel(this,db));
@@ -25,7 +24,7 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
 
    lineEdit().at(indexOf("AppelationId"))->hide();
    lineEdit().at(indexOf("DomaineId"))->hide();
-
+   lineEdit().at(indexOf("GrapeVariety"))->hide();
 }
 
 WineModel *WineDialog::wineModel() const
@@ -256,7 +255,22 @@ void WineDialog::on_appelationIdLineEdit_textChanged(const QString &text)
 void WineDialog::on_domaineIdLineEdit_textChanged(const QString &text)
 {
         setActionButtonEnabled();
-    Q_UNUSED(text)
+        Q_UNUSED(text)
+}
+
+void WineDialog::on_grapeVarietyLineEdit_textChanged(const QString &text)
+{
+    QString decodedText;
+    if (!text.isEmpty()) {
+        QSqlQuery query;
+        query.prepare(QString("SELECT Variety FROM GrapeVariety WHERE Id IN %1").arg(text));
+        query.exec();
+        query.first();
+        decodedText = query.value("Variety").toString();
+        while (query.next())
+            decodedText.append(", " + query.value("Variety").toString());
+    }
+    textEdit().at(indexOf("Variety"))->setPlainText(decodedText);
 }
 
 void WineDialog::setActionButtonEnabled()
@@ -299,5 +313,5 @@ void WineDialog::setCombosFromAppelationId(const int &appelationId)
         combo().at(indexOf("Appelation"))->setCurrentText(appelationStr);
         setAppellationFields(appelationId);}
 
-     setActionButtonEnabled();
+    setActionButtonEnabled();
 }

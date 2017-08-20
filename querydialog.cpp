@@ -50,7 +50,6 @@ void QueryDialog::setModelAndView(AbstractWineTableModel *model)
     view()->setModel(model);
     connect(view()->selectionModel(),&QItemSelectionModel::selectionChanged,this,&QueryDialog::onViewSelectionChanged);
     connect(model,&QAbstractItemModel::modelAboutToBeReset,this,&QueryDialog::onViewModelAboutToBeReset);
-    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(adjustViewSize()));
     m_model = model;
 }
 
