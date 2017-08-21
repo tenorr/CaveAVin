@@ -273,6 +273,16 @@ void WineDialog::on_grapeVarietyLineEdit_textChanged(const QString &text)
     textEdit().at(indexOf("Variety"))->setPlainText(decodedText);
 }
 
+void WineDialog::on_grapeVarietyButton_clicked()
+{
+    GrapeVarietySelectionDialog *dialog = new GrapeVarietySelectionDialog(wineModel()->database(),lineEdit().at(indexOf("GrapeVariety"))->text());
+    if (dialog->exec() == QDialog::Accepted) {
+        QString str = dialog->getVarietyString();
+        if (str != lineEdit().at(indexOf("GrapeVariety"))->text())
+            lineEdit().at(indexOf("GrapeVariety"))->setText(str);
+    }
+}
+
 void WineDialog::setActionButtonEnabled()
 {
     QPushButton *button = buttonBox()->findChild<QPushButton *>("actionButton");

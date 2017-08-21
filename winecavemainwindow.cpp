@@ -139,7 +139,7 @@ QSqlDatabase WineCaveMainWindow::db() const
 void WineCaveMainWindow::setDb()
 {
     QSqlDatabase db=QSqlDatabase::addDatabase("QODBC");
-    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:\\Users\\olivi_000\\OneDrive\\Documents\\Qt\\WineCave\\WineDatabase.mdb");
+    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:/Users/olivi_000/OneDrive/Documents/Qt/WineCave/CaveAVin/WineDatabase.mdb");
     db.open();
     m_db = db;
 }

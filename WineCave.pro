@@ -63,7 +63,8 @@ SOURCES += \
     regionquerydialog.cpp \
     regionmodel.cpp \
     appelationquerydialog.cpp \
-    appelationmodel.cpp
+    appelationmodel.cpp \
+    grapevarietyselectiondialog.cpp
 
 HEADERS += \
         winecavemainwindow.h \
@@ -104,13 +105,15 @@ HEADERS += \
     regionquerydialog.h \
     regionmodel.h \
     appelationquerydialog.h \
-    appelationmodel.h
+    appelationmodel.h \
+    grapevarietyselectiondialog.h
 
 FORMS += \
     bottleDialog.ui \
     queryForm.ui \
     domaineForm.ui \
-    wineForm.ui
+    wineForm.ui \
+    grapevarietyform.ui
 
 RESOURCES += \
     res.qrc

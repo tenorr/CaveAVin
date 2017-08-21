@@ -4,5 +4,6 @@
         <file>queryForm.ui</file>
         <file>domaineForm.ui</file>
         <file>wineForm.ui</file>
+        <file>grapevarietyform.ui</file>
     </qresource>
 </RCC>

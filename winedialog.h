@@ -6,6 +6,7 @@
 #include "appelationquerydialog.h"
 #include "regionquerydialog.h"
 #include "winemodel.h"
+#include "grapevarietyselectiondialog.h"
 
 #include <QSqlQuery>
 
@@ -22,7 +23,6 @@ public:
     int wineTypeId();
     int domaineId(const QString &text, bool &fUnique);
 
-
 protected:
     virtual void setInitialData(int id);
 
@@ -37,6 +37,7 @@ private slots:
     void on_appelationIdLineEdit_textChanged(const QString &text);
     void on_domaineIdLineEdit_textChanged(const QString &text);
     void on_grapeVarietyLineEdit_textChanged(const QString &text);
+    void on_grapeVarietyButton_clicked();
 
 private:
     WineModel *wineModel() const;

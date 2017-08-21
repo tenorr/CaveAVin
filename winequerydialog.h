@@ -5,8 +5,6 @@
 #include "winemodel.h"
 #include "winedialog.h"
 
-
-
 class WineQueryDialog : public QueryDialog
 {
     Q_OBJECT
@@ -20,7 +18,6 @@ public slots:
     void on_queryLineEdit2_textEdited(const QString &text);
     void on_queryComboBox_currentIndexChanged(int index);
     void doAction(QAbstractButton *button);
-
 };
 
 #endif // WINEQUERYDIALOG_H
