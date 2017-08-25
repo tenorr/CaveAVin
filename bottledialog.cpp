@@ -1,6 +1,7 @@
 ﻿#include "bottledialog.h"
 #include <QDebug>
 
+
 BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidget *parent, Qt::WindowFlags f)
     :AbstractFormDialog(parent, f)
 {
@@ -12,6 +13,7 @@ BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidge
     setInitialData(rec);
 
     lineEdit().at(indexOf("DomaineId"))->hide();
+    lineEdit().at(indexOf("LabelImage"))->hide();
 
     // Create Dialog Buttons
     QString processText =(iProcess ==0)? tr("Create") : tr("Update");
@@ -110,6 +112,46 @@ void BottleDialog::on_wineNameLineEdit_textChanged(const QString &text)
     Q_UNUSED(text)
 }
 
+void BottleDialog::on_labelImageLineEdit_textChanged(const QString &text)
+{
+    photo()->clear();
+    if (!text.contains("http"))
+         loadPhotoFromFile(text);
+   /*
+    * For http use following code
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager,&QNetworkAccessManager::finished,this,&BottleDialog::replyFinished);
+    QUrl url(text);
+    QNetworkRequest request;
+    QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::SslV3);
+    request.setSslConfiguration(config);
+    request.setUrl(url);
+    manager->get(request);
+*/
+
+}
+
+/*
+void BottleDialog::replyFinished(QNetworkReply *reply)
+{
+    QByteArray jpegData = reply->readAll();
+    QPixmap pixmap;
+    qDebug() << pixmap.loadFromData(jpegData);
+    QLabel *label = findChild<QLabel *>("photoLabel");
+    label->setPixmap(pixmap);
+}
+*/
+QLabel *BottleDialog::photo() const
+{
+    return m_photo;
+}
+
+void BottleDialog::setPhoto()
+{
+    m_photo = findChild<QLabel *>("photoLabel");
+}
+
 int BottleDialog::wineId() const
 {
     return m_wineId;
@@ -145,6 +187,10 @@ void BottleDialog::setInitialData(QSqlRecord rec)
     lineEdit().at(indexOf("PurchaseLocation"))->setText(rec.value("Purchase_Location").toString());
     doubleSpinBox().at(indexOf("PurchasePrice"))->setValue(rec.value("Purchase_Price").toDouble());
     dateEdit().at(indexOf("PurchaseDate"))->setDate((rec.value("Purchase_Date").toDateTime()).date());
+
+    // Set Photo Label and load image if exist
+    setPhoto();
+    lineEdit().at(indexOf("LabelImage"))->setText(rec.value("LabelImage").toString());
 
      // Initialise Millesime Combo
      // Find current Date and build from today downto 1900 years
@@ -240,7 +286,39 @@ void BottleDialog::findWineId()
         }
     else {
          lineEdit().at(indexOf("WineId"))->clear();
-        }
+    }
+}
+
+void BottleDialog::loadPhotoFromFile(QString const & text)
+{
+    // Check if file exists and format supported and put into the photo Label
+   QPixmap pixmap;
+   if (pixmap.load(text)) {
+       pixmap = pixmap.scaled(photo()->width(),photo()->height(),Qt::KeepAspectRatio);
+       photo()->setPixmap(pixmap);
+   }
+}
+
+void BottleDialog::changePhotoFile()
+{
+    QString currentFileName =  lineEdit().at(indexOf("LabelImage"))->text();
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                     currentFileName,
+                                                     tr("Images (*.png *.xpm *.jpg)"),nullptr,QFileDialog::DontResolveSymlinks);
+
+    if (!fileName.isEmpty() && (fileName != currentFileName))
+        lineEdit().at(indexOf("LabelImage"))->setText(fileName);
+}
+
+void BottleDialog::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event) {
+        // Check if event is above the photoLabel
+        QRect rect = photo()->geometry();
+        if (rect.contains(event->pos()))
+            // If so change Photo
+            changePhotoFile();
+    }
 }
 
 

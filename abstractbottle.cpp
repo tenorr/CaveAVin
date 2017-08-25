@@ -174,6 +174,10 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
           index = dialog->index("PurchasePrice");
           rec.setValue("Purchase_Price",dialog->doubleSpinBox().at(index)->value());
 
+          // Manage Label Image
+          index = dialog->index("LabelImage");
+          rec.setValue("LabelImage",dialog->lineEdit().at(index)->text());
+
         // Create New Record
         if (row == -1) {
             rec.setValue("Id",id());

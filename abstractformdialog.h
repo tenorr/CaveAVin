@@ -42,12 +42,10 @@ public:
     QList<QDateEdit *> dateEdit() const;
     void setDateEdit();
 
-
-    int getId();
-
-
     QList<QTableWidget *> tableWidget() const;
     void setTableWidget();
+
+    int getId();
 
 protected:
     enum WidgetType {Unknown,LineEdit, TextEdit, SpinBox, DoubleSpinBox, DateEdit, ComboBox, TableWidget};

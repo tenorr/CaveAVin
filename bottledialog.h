@@ -6,6 +6,11 @@
 #include <QSqlTableModel>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QFileDialog>
+#include <QMouseEvent>
+
+//#include <QNetworkAccessManager>
+//#include <QNetworkReply>
 
 
 class BottleDialog : public AbstractFormDialog
@@ -25,10 +30,18 @@ public:
     int wineType();
 
 private:
+    QLabel *photo() const;
+    void setPhoto();
+
     void setInitialData(QSqlRecord rec);
     void setEnabledActionButton(bool fEnabled);
     void setWineIdFields();
     void findWineId();
+    void loadPhotoFromFile(const QString &text);
+    void changePhotoFile();
+
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *event);
 
 private slots:
     void on_purchaseDateClearButton_clicked();
@@ -39,10 +52,13 @@ private slots:
     void on_wineIdLineEdit_textChanged(const QString &text);
     void on_wineryLineEdit_textChanged(const QString &text);
     void on_wineNameLineEdit_textChanged(const QString &text);
+    void on_labelImageLineEdit_textChanged(const QString &text);
+    // void replyFinished(QNetworkReply *reply);
 
 private:
     QSqlDatabase m_db;
     int m_wineId;
+    QLabel *m_photo;
     bool fConnectWineId;
 };
 
