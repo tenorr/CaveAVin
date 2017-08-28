@@ -58,6 +58,7 @@ private slots:
 private:
     QSqlDatabase m_db;
     int m_wineId;
+    int m_initialWineType;
     QLabel *m_photo;
     bool fConnectWineId;
 };

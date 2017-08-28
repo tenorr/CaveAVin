@@ -20,6 +20,7 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
     populateCombo("Region","Region","Region");
     populateAppelationCombo();
     setInitialData(selectedId);
+    setInitialWineType(combo().at(indexOf("Type"))->currentIndex());
     setActionButtonEnabled();
 
    lineEdit().at(indexOf("AppelationId"))->hide();
@@ -183,8 +184,14 @@ void WineDialog::doAction()
     QPushButton *button = buttonBox()->findChild<QPushButton *>("actionButton");
     if (button->text() == tr("Create"))
         wineModel()->insertRecord(-1,rec);
-    else
-        wineModel()->setRecord(wineModel()->rowPosition(rec.value("Id").toInt()),rec);
+    else {
+        // Send WineType Event if wine type is changed
+        if (wineTypeId() != initialWineType()) {
+            // Create Event and sent it
+            WineTypeEvent *event = new WineTypeEvent(wineTypeId(),rec.value("Id").toInt());
+            event->sendEvent();
+        }
+        wineModel()->setRecord(wineModel()->rowPosition(rec.value("Id").toInt()),rec);}
 
     wineModel()->submitAll();
     accept();
@@ -324,4 +331,14 @@ void WineDialog::setCombosFromAppelationId(const int &appelationId)
         setAppellationFields(appelationId);}
 
     setActionButtonEnabled();
+}
+
+int WineDialog::initialWineType() const
+{
+    return m_initialWineType;
+}
+
+void WineDialog::setInitialWineType(int initialWineType)
+{
+    m_initialWineType = initialWineType;
 }

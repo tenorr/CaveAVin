@@ -80,6 +80,7 @@ void AbstractBottle::setWineType(int wineType)
     setColor(color);
     setBrushStyle(brushStyle);
     m_wineType = wineType;
+    update();
 }
 
 BottleTableModel *AbstractBottle::bottleModel() const
@@ -94,7 +95,14 @@ void AbstractBottle::setBottleModel(BottleTableModel *bottleModel)
 
 void AbstractBottle::drinkBottle()
 {
-    emit bottleToBeDeleted(id());
+    // Prompt for confirmation
+    QMessageBox msgBox;
+    msgBox.setText("The bottle is about to be drunk");
+    msgBox.setInformativeText("Do you want to proceed ?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    if (msgBox.exec() == QMessageBox::Ok)
+        emit bottleToBeDeleted(id());
 }
 
 QRectF AbstractBottle::boundingRect() const
@@ -187,10 +195,9 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
             bottleModel()->setRecord(row,rec);
             // Change Wine Type if needed
             int wineTypeId = dialog->wineType();
-;           if (wineType() != wineTypeId)
+            if (wineType() != wineTypeId)
                 setWineType(wineTypeId);
-            }
-
+        }
     bottleModel()->submitAll();
     dialog->deleteLater();
     return true;

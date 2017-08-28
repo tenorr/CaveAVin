@@ -12,6 +12,8 @@
 #include <QTableView>
 #include <QSqlRecord>
 
+class WineTypeView;
+
 class WineTypeDialog : public QDialog
 {
     Q_OBJECT

@@ -7,6 +7,7 @@
 #include "regionquerydialog.h"
 #include "winemodel.h"
 #include "grapevarietyselectiondialog.h"
+#include "winetypeevent.h"
 
 #include <QSqlQuery>
 
@@ -41,10 +42,15 @@ private slots:
 
 private:
     WineModel *wineModel() const;
+    int initialWineType() const;
+    void setInitialWineType(int initialWineType);
     void populateAppelationCombo(int wineTypeId=0, int regionId=0);
     void setAppellationFields(int appelationId=0);
     void setActionButtonEnabled();
     void setCombosFromAppelationId(const int & appelationId);
+
+private:
+    int m_initialWineType;
 };
 
 #endif // WINEDIALOG_H

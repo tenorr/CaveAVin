@@ -93,9 +93,7 @@ void WineCaveMainWindow::setRoom(Room *room)
 
 void WineCaveMainWindow::defineWineTypes()
 {
-    WineTypeDialog *dialog = new WineTypeDialog(db());
-    connect(dialog->view(),&WineTypeView::colorChanged,room(),&Room::changeWineColor);
-    connect(dialog->view(),&WineTypeView::brushStyleChanged,room(),&Room::changeWinebrushStyle);
+    WineTypeDialog *dialog = new WineTypeDialog(db(),this);
     if (dialog->exec() == QDialog::Accepted)
         dialog->model()->submitAll();
      dialog->deleteLater();
