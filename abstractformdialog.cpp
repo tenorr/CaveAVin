@@ -33,6 +33,7 @@ void AbstractFormDialog::setForm(const QString &fileName)
     setSpinBox();
     setDoubleSpinBox();
     setDateEdit();
+    setTableWidget();
     setButtonBox();
 }
 
@@ -73,6 +74,12 @@ int AbstractFormDialog::indexOf(const QString &text)
     for(int i=0,n=dateEdit().size();i<n;i++) {
         objectName = dateEdit().at(i)->objectName();
         objectName.chop(QString("DateEdit").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
+            return i;}
+
+    for(int i=0,n=tableWidget().size();i<n;i++) {
+        objectName = tableWidget().at(i)->objectName();
+        objectName.chop(QString("TableWidget").length());
         if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
             return i;}
 
@@ -117,8 +124,26 @@ AbstractFormDialog::WidgetType AbstractFormDialog::typeOf(const QString &text)
         objectName.chop(QString("DateEdit").length());
         if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
               return DateEdit;}
-    return Unknown;
+
+    for(int i=0,n=tableWidget().size();i<n;i++) {
+        objectName = tableWidget().at(i)->objectName();
+        objectName.chop(QString("TableWidget").length());
+        if (QString::compare(objectName,text,Qt::CaseInsensitive) == 0)
+            return TableWidget;}
+  return Unknown;
 }
+
+
+QList<QTableWidget *> AbstractFormDialog::tableWidget() const
+{
+    return m_tableWidget;
+}
+
+void AbstractFormDialog::setTableWidget()
+{
+    m_tableWidget = findChildren<QTableWidget*>();
+}
+
 
 QList<QDateEdit *> AbstractFormDialog::dateEdit() const
 {

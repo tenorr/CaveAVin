@@ -1,13 +1,16 @@
 #ifndef WINETYPEVIEW_H
 #define WINETYPEVIEW_H
 
+#include "circlebrushstyledialog.h"
+#include "winetypeevent.h"
+
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QTableView>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QColorDialog>
-#include "circlebrushstyledialog.h"
+
 
 class WineTypeView : public QTableView
 {
@@ -27,16 +30,15 @@ public:
     QSqlTableModel *SqlModel();
     void setSqlModel(QSqlTableModel *SqlModel);
 
-signals:
-   void colorChanged(int id, QColor color);
-   void brushStyleChanged(int id, Qt::BrushStyle bs);
-
 protected:
     void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
     void changeColor();
     void changeBrushStyle();
+
+private:
+    void sendWineTypeEvent(int wineTypeId);
 
 private:
     int m_selectedRow;

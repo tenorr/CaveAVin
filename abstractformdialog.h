@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QDateEdit>
 #include <QPushButton>
+#include <QTableWidget>
 
 
 class AbstractFormDialog : public QDialog
@@ -41,9 +42,13 @@ public:
     QList<QDateEdit *> dateEdit() const;
     void setDateEdit();
 
+    QList<QTableWidget *> tableWidget() const;
+    void setTableWidget();
+
     int getId();
+
 protected:
-     enum WidgetType {Unknown,LineEdit, TextEdit, SpinBox, DoubleSpinBox, DateEdit, ComboBox};
+    enum WidgetType {Unknown,LineEdit, TextEdit, SpinBox, DoubleSpinBox, DateEdit, ComboBox, TableWidget};
 
 protected:
     void setForm(const QString &fileName);
@@ -57,6 +62,7 @@ protected:
     QList<QSpinBox *> m_spinBox;
     QList<QDoubleSpinBox *> m_doubleSpinBox;
     QList<QDateEdit *> m_dateEdit;
+    QList<QTableWidget *> m_tableWidget;
     QDialogButtonBox * m_buttonBox;
 
 };

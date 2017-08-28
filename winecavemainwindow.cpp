@@ -93,9 +93,7 @@ void WineCaveMainWindow::setRoom(Room *room)
 
 void WineCaveMainWindow::defineWineTypes()
 {
-    WineTypeDialog *dialog = new WineTypeDialog(db());
-    connect(dialog->view(),&WineTypeView::colorChanged,room(),&Room::changeWineColor);
-    connect(dialog->view(),&WineTypeView::brushStyleChanged,room(),&Room::changeWinebrushStyle);
+    WineTypeDialog *dialog = new WineTypeDialog(db(),this);
     if (dialog->exec() == QDialog::Accepted)
         dialog->model()->submitAll();
      dialog->deleteLater();
@@ -139,7 +137,7 @@ QSqlDatabase WineCaveMainWindow::db() const
 void WineCaveMainWindow::setDb()
 {
     QSqlDatabase db=QSqlDatabase::addDatabase("QODBC");
-    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:\\Users\\olivi_000\\OneDrive\\Documents\\Qt\\WineCave\\WineDatabase.mdb");
+    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:/Users/olivi_000/OneDrive/Documents/Qt/WineCave/CaveAVin/WineDatabase.mdb");
     db.open();
     m_db = db;
 }

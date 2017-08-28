@@ -92,6 +92,43 @@ void AbstractScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenu
     }
 }
 
+bool AbstractScene::event(QEvent *event)
+{
+    if (event->type() == QEvent::User) {
+        // Convert event
+        WineTypeEvent * wEvent = static_cast <WineTypeEvent *>(event);
+        wineTypeEvent(wEvent);
+        return true;
+    }
+    return QGraphicsScene::event(event);
+}
+
+void AbstractScene::wineTypeEvent(WineTypeEvent *event)
+{
+     // Retrieve every Graphics Item of Bottle Type
+     QList<QGraphicsItem *> itemList = items();
+     foreach (QGraphicsItem * item, itemList) {
+         if ((item->type() == QGraphicsItem::UserType+1) || (item->type() == QGraphicsItem::UserType+3)) {
+             AbstractBottle * bottle =  dynamic_cast<AbstractBottle *>(item);
+             // Find if bottle has the wine Id
+               if (event->wineId() !=0) {
+                QSqlQuery query;
+                query.prepare(QString("SELECT Wine FROM Bottle WHERE (Id = %1) AND (Wine = %2)").arg(bottle->id()).arg(event->wineId()));
+                query.exec();
+                if (!query.first())
+                    continue;
+            }
+            else {
+                // Look if Wine Type agrees
+                if (bottle->wineType() != event->wineTypeId())
+                    continue;
+            }
+            // Change Wine Type
+            bottle->setWineType(event->wineTypeId());
+        }
+     }
+}
+
 ZoneTableModel *AbstractScene::zoneModel() const
 {
     return m_zoneModel;

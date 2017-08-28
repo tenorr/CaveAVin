@@ -96,33 +96,6 @@ void Room::repositionBottle(int bottleId, QPoint pos)
     }
 }
 
-void Room::changeWineColor(int index, QColor color)
-{
-    QList<QGraphicsItem *> itemList = items();
-    foreach (QGraphicsItem * item, itemList) {
-        if (item->type()== QGraphicsItem::UserType +1) {
-            Bottle *bottle = static_cast<Bottle *>(item);
-            if (bottle->wineType() == index) {
-                bottle->setColor(color);
-            }
-        }
-    }
-}
-
-void Room::changeWinebrushStyle(int index, Qt::BrushStyle bs)
-{
-    QList<QGraphicsItem *> itemList = items();
-    foreach (QGraphicsItem * item, itemList) {
-        if (item->type()== QGraphicsItem::UserType +1) {
-            Bottle *bottle = static_cast<Bottle *>(item);
-            if (bottle->brushStyle() == index) {
-                bottle->setBrushStyle(bs);
-            }
-        }
-    }
-}
-
-
 void Room::addContainer(QSqlRecord rec)
 {
     // Check if rec is about to the room
@@ -172,5 +145,6 @@ void Room::setContainerModel(ContainerTableModel *containerModel)
 {
     m_containerModel = containerModel;
 }
+
 
 

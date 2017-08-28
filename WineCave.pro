@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets uitools
 
@@ -63,7 +63,9 @@ SOURCES += \
     regionquerydialog.cpp \
     regionmodel.cpp \
     appelationquerydialog.cpp \
-    appelationmodel.cpp
+    appelationmodel.cpp \
+    grapevarietyselectiondialog.cpp \
+    winetypeevent.cpp
 
 HEADERS += \
         winecavemainwindow.h \
@@ -104,13 +106,16 @@ HEADERS += \
     regionquerydialog.h \
     regionmodel.h \
     appelationquerydialog.h \
-    appelationmodel.h
+    appelationmodel.h \
+    grapevarietyselectiondialog.h \
+    winetypeevent.h
 
 FORMS += \
     bottleDialog.ui \
     queryForm.ui \
     domaineForm.ui \
-    wineForm.ui
+    wineForm.ui \
+    grapevarietyform.ui
 
 RESOURCES += \
     res.qrc

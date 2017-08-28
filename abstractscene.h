@@ -5,6 +5,7 @@
 #include "graphicstext.h"
 #include "zonetablemodel.h"
 #include "abstractbottle.h"
+#include "winetypeevent.h"
 
 #include <QGraphicsScene>
 #include <QSqlDatabase>
@@ -53,6 +54,8 @@ public slots:
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent);
     virtual void createContextMenu() =0;
+    virtual bool event(QEvent *event);
+    virtual void wineTypeEvent(WineTypeEvent *event);
 
 protected:
     int m_id;

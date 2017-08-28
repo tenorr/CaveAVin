@@ -6,6 +6,7 @@
 #include "graphicsobject.h"
 #include <QPainter>
 #include <QSqlQuery>
+#include <QMessageBox>
 
 
 class AbstractBottle : public GraphicsObject

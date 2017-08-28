@@ -1,4 +1,5 @@
 #include "winetypeview.h"
+#include <QDebug>
 
 WineTypeView::WineTypeView(QSqlTableModel *model, QWidget *parent)
     :QTableView(parent)
@@ -49,7 +50,7 @@ void WineTypeView::changeColor()
            rec.setValue(4,newColor.blue());
            SqlModel()->setRecord(selectedRow(),rec);
            SqlModel()->submitAll();
-           emit colorChanged(id,newColor);
+           sendWineTypeEvent(id);
          }
     }
 }
@@ -66,10 +67,17 @@ void WineTypeView::changeBrushStyle()
             rec.setValue("BrushStyle",(int) bs);
             SqlModel()->setRecord(selectedRow(),rec);
             SqlModel()->submitAll();
-            emit brushStyleChanged(id, bs);
+            sendWineTypeEvent(id);
             }
         }
     delete dialog;
+}
+
+void WineTypeView::sendWineTypeEvent(int wineTypeId)
+{
+    // Create and Send Event
+    WineTypeEvent *event = new WineTypeEvent(wineTypeId);
+    event->sendEvent();
 }
 
 QSqlTableModel *WineTypeView::SqlModel()

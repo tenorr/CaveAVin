@@ -24,8 +24,6 @@ public slots:
     void deleteContainer(int id);
     void createBottle();
     void repositionBottle(int bottleId, QPoint pos);
-    void changeWineColor(int index, QColor color);
-    void changeWinebrushStyle(int index, Qt::BrushStyle bs);
 
 private:
     void addContainer(QSqlRecord rec);
