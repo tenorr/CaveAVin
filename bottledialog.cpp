@@ -129,7 +129,21 @@ void BottleDialog::on_labelImageLineEdit_textChanged(const QString &text)
     request.setUrl(url);
     manager->get(request);
 */
+}
 
+void BottleDialog::on_bottleTypeComboBox_currentIndexChanged(int index)
+{
+    QSqlQuery query;
+    query.prepare(QString("SELECT Capacity, Radius, Length FROM BottleType WHERE Id = %1").arg(QString::number(index)));
+    query.exec();
+    bool fType = query.first();
+    QStringList strList{"Capacity", "Radius", "Length"};
+        foreach (QString str, strList) {
+            if (fType)
+              lineEdit().at(indexOf(str))->setText(QString::number(query.value(str).toInt()));
+            else
+                lineEdit().at(indexOf(str))->clear();
+    }
 }
 
 /*
@@ -203,6 +217,16 @@ void BottleDialog::setInitialData(QSqlRecord rec)
     combo().at(indexOf("Millesime"))->addItems(yearList);
     int millesime = rec.value("Millesime").toInt();
     combo().at(indexOf("Millesime"))->setCurrentText((millesime==0)? "" : QString::number(millesime));
+
+    //Populate and initialise BottleType Combo
+    QStringList list{""};
+    QSqlQuery query;
+    query.prepare("SELECT BottleType FROM BottleType");
+    query.exec();
+    while (query.next())
+        list << query.value("BottleType").toString();
+    combo().at(indexOf("BottleType"))->addItems(list);
+    combo().at(indexOf("BottleType"))->setCurrentIndex(rec.value("BottleType").toInt());
 
     // Set Data From Wine Table if any
     int wineId = rec.value("Wine").toInt();
