@@ -30,11 +30,23 @@ public:
     ContainerScene *containerScene() const;
     void setContainerScene(ContainerScene *containerScene);
 
+    int containerId() const;
+    void setContainerId(int containerId);
+
+protected:
+    virtual void moveEvent(QMoveEvent *event);
+
+private:
+    QRect getGeometryFromDatabase(int containerId);
+    QString encodeFromQRect(const QRect rect);
+    QRect decodeToQRect(const QString &text);
+
 private:
     QMenu ** m_menus;
     QGraphicsView *m_graphicsView;
     ContainerScene *m_containerScene;
     Room *m_room;
+    int m_containerId;
 };
 
 #endif // CONTAINERWINDOW_H

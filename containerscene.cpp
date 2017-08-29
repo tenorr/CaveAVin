@@ -10,6 +10,9 @@ ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
     setZoneModel(room.zoneModel());
     setTableName("Container");
 
+    // Store container dimensions
+         setRatio();
+
     // Add color and brush style
        QPen pen;
        pen.setWidth(10);
@@ -17,14 +20,13 @@ ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
        QBrush brush(color());
        brush.setStyle(brushStyle());
 
-       addRect(10,10,1960,1200,pen,brush);
-       setName(new GraphicsText);
+      addRect(10,10,width()-20,height()-20,pen,brush);
+      setName(new GraphicsText);
 
    // Create Context Menu
        createContextMenu();
 
-  // Store container dimensions
-       setRatio();
+
 
    // Populate Container with zones
           for(int i=0;i<zoneModel()->rowCount();i++) {
@@ -66,6 +68,22 @@ void ContainerScene::createContextMenu()
     menu->addAction(tr("Create Zone"), this,SLOT(createZone()));
     menu->addAction(tr("Create Bottle"));
     setContextMenu(menu);
+}
+
+QRect ContainerScene::decodeToQRect(const QString &text)
+{
+    // Create a QRect(0,0,w,h)
+    QRect rect;
+    QString str = text;
+    rect.setX(0);
+    rect.setY(0);
+    str.remove(0,str.indexOf(" ")+1);
+    int n = (str.left(str.indexOf("x"))).toInt();
+    rect.setWidth(n);
+    str.remove(0,str.indexOf("x")+1);
+    n = (str.left(str.indexOf(")"))).toInt();
+    rect.setHeight(n);
+    return rect;
 }
 
 void ContainerScene::createZone()
@@ -131,12 +149,17 @@ void ContainerScene::createBottle()
 
 void ContainerScene::setRatio()
 {
+
     // Prepare Query to retrieve width and height
     QSqlQuery query;
-    query.prepare("SELECT Width, Height FROM Container WHERE Id = :id");
+    query.prepare("SELECT Width, Height, QRect FROM Container WHERE Id = :id");
     query.bindValue(":id",id());
     query.exec();
     query.next();
+
+    QRect rect = decodeToQRect(query.value("QRect").toString());
+    setSceneRect(rect);
+
     qreal xRatio = width()/query.value(0).toInt();
     qreal yRatio = height()/query.value(1).toInt();
 
