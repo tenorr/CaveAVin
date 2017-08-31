@@ -64,7 +64,7 @@ void Room::createBottle()
     QSqlRecord rec = bottleModel()->record();
     int newId = bottleModel()->newId();
     rec.setValue("Id",newId);
-    rec.setValue("Purchase_Date",QDate::currentDate());
+    rec.setValue("PurchaseDate",QDate::currentDate());
     rec.setValue("Room", id());
     rec.setValue("RoomX",contextPosition().x());
     rec.setValue("RoomY",contextPosition().y());

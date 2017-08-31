@@ -9,7 +9,7 @@ class WineQueryDialog : public QueryDialog
 {
     Q_OBJECT
 public:
-    WineQueryDialog(QString domaineStr, QString wineStr, QSqlDatabase db, QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
+    WineQueryDialog(QString wineryStr, QString wineStr, QSqlDatabase db, QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
 
     WineModel * wineModel() const;
 

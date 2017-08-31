@@ -51,10 +51,10 @@ SOURCES += \
     zonetablemodel.cpp \
     abstractbottle.cpp \
     containerbottle.cpp \
-    domainequerydialog.cpp \
-    domainemodel.cpp \
+    wineryquerydialog.cpp \
+    winerymodel.cpp \
     querydialog.cpp \
-    domainedialog.cpp \
+    winerydialog.cpp \
     abstractformdialog.cpp \
     winequerydialog.cpp \
     winemodel.cpp \
@@ -62,8 +62,8 @@ SOURCES += \
     abstractmodelformdialog.cpp \
     regionquerydialog.cpp \
     regionmodel.cpp \
-    appelationquerydialog.cpp \
-    appelationmodel.cpp \
+    appellationquerydialog.cpp \
+    appellationmodel.cpp \
     grapevarietyselectiondialog.cpp \
     winetypeevent.cpp
 
@@ -94,10 +94,10 @@ HEADERS += \
     zonetablemodel.h \
     abstractbottle.h \
     containerbottle.h \
-    domainequerydialog.h \
-    domainemodel.h \
+    wineryquerydialog.h \
+    winerymodel.h \
     querydialog.h \
-    domainedialog.h \
+    winerydialog.h \
     abstractformdialog.h \
     winequerydialog.h \
     winemodel.h \
@@ -105,15 +105,15 @@ HEADERS += \
     abstractmodelformdialog.h \
     regionquerydialog.h \
     regionmodel.h \
-    appelationquerydialog.h \
-    appelationmodel.h \
+    appellationquerydialog.h \
+    appellationmodel.h \
     grapevarietyselectiondialog.h \
     winetypeevent.h
 
 FORMS += \
     bottleDialog.ui \
     queryForm.ui \
-    domaineForm.ui \
+    wineryForm.ui \
     wineForm.ui \
     grapevarietyform.ui
 

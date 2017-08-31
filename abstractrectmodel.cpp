@@ -13,7 +13,7 @@ QSqlRecord AbstractRectModel::createNew(int parentId, QPointF pos)
     // Create new Record
     QSqlRecord rec = record();
     rec.setValue("Id",id);
-    rec.setValue(tableName()+"_Name",tableName()+tr(" #")+QString::number(id));
+    rec.setValue(tableName()+"Name",tableName()+tr(" #")+QString::number(id));
     rec.setValue(parentName(),parentId);
     rec.setValue("XPos",pos.x());
     rec.setValue("YPos",pos.y());

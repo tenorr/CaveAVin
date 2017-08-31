@@ -15,9 +15,9 @@ int Container::containerType() const
     return m_containerType;
 }
 
-void Container::setContainerType(int container_type)
+void Container::setContainerType(int containerType)
 {
-    m_containerType = container_type;
+    m_containerType = containerType;
 }
 
 void Container::clearBottleChildren()

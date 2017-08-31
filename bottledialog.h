@@ -1,7 +1,7 @@
 #ifndef BOTTLEDIALOG_H
 #define BOTTLEDIALOG_H
 
-#include "domainequerydialog.h"
+#include "wineryquerydialog.h"
 #include "winequerydialog.h"
 #include <QSqlTableModel>
 #include <QSqlQuery>

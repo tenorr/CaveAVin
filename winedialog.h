@@ -2,8 +2,8 @@
 #define WINEDIALOG_H
 
 #include "abstractmodelformdialog.h"
-#include "domainequerydialog.h"
-#include "appelationquerydialog.h"
+#include "wineryquerydialog.h"
+#include "appellationquerydialog.h"
 #include "regionquerydialog.h"
 #include "winemodel.h"
 #include "grapevarietyselectiondialog.h"
@@ -18,25 +18,25 @@ class WineDialog : public AbstractModelFormDialog
 public:
     WineDialog(QSqlDatabase db, int selectedId=-1, QWidget *parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
 
-    int appelationId();
-    QString appelationStr(bool fQuery=true);
+    int appellationId();
+    QString appellationStr(bool fQuery=true);
     int regionId();
     int wineTypeId();
-    int domaineId(const QString &text, bool &fUnique);
+    int wineryId(const QString &text, bool &fUnique);
 
 protected:
     virtual void setInitialData(int id);
 
 private slots:
     void doAction();
-    void on_domaineButton_clicked();
-    void on_domaineLineEdit_textEdited(const QString &text);
-    void on_appelationButton_clicked();
-    void on_appelationComboBox_activated(int index);
+    void on_wineryButton_clicked();
+    void on_wineryLineEdit_textEdited(const QString &text);
+    void on_appellationButton_clicked();
+    void on_appellationComboBox_activated(int index);
     void on_regionComboBox_activated(int index);
     void on_typeComboBox_activated(int index);
-    void on_appelationIdLineEdit_textChanged(const QString &text);
-    void on_domaineIdLineEdit_textChanged(const QString &text);
+    void on_appellationIdLineEdit_textChanged(const QString &text);
+    void on_wineryIdLineEdit_textChanged(const QString &text);
     void on_grapeVarietyLineEdit_textChanged(const QString &text);
     void on_grapeVarietyButton_clicked();
 
@@ -44,10 +44,10 @@ private:
     WineModel *wineModel() const;
     int initialWineType() const;
     void setInitialWineType(int initialWineType);
-    void populateAppelationCombo(int wineTypeId=0, int regionId=0);
-    void setAppellationFields(int appelationId=0);
+    void populateAppellationCombo(int wineTypeId=0, int regionId=0);
+    void setAppellationFields(int appellationId=0);
     void setActionButtonEnabled();
-    void setCombosFromAppelationId(const int & appelationId);
+    void setCombosFromAppellationId(const int & appellationId);
 
 private:
     int m_initialWineType;

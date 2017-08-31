@@ -12,7 +12,7 @@ BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidge
     setForm(":/form/bottleDialog.ui");
     setInitialData(rec);
 
-    lineEdit().at(indexOf("DomaineId"))->hide();
+    lineEdit().at(indexOf("WineryId"))->hide();
     lineEdit().at(indexOf("LabelImage"))->hide();
 
     // Create Dialog Buttons
@@ -47,7 +47,7 @@ void BottleDialog::on_purchaseDateTodayButton_clicked()
 
 void BottleDialog::on_wineryButton_clicked()
 {
-    DomaineQueryDialog *dialog = new DomaineQueryDialog(lineEdit().at(indexOf("Winery"))->text(),db());
+    WineryQueryDialog *dialog = new WineryQueryDialog(lineEdit().at(indexOf("Winery"))->text(),db());
     if (dialog->exec()== QDialog::Accepted) {
         // Retrieve selected item and update line Edit
         QString str = dialog->selectedName();
@@ -66,16 +66,16 @@ void BottleDialog::on_wineNameButton_clicked()
         if (!str.isEmpty()) {
             fConnectWineId = false;
             lineEdit().at(indexOf("WineName"))->setText(str);
-            lineEdit().at(indexOf("Winery"))->setText(dialog->selectedStringField("Domaine"));
+            lineEdit().at(indexOf("Winery"))->setText(dialog->selectedStringField("Winery"));
             lineEdit().at(indexOf("WineId"))->setText(dialog->selectedStringField("Id"));
-        // Retrieve appelation
+        // Retrieve Appellation
             QSqlQuery query;
-            query.prepare(QString("SELECT a.Appelation, t.type FROM Appelation AS a "
-                                  "INNER JOIN Appelation_Type AS t ON a.Type = t.Id WHERE a.ID = %1").arg(dialog->selectedIntField("Appelation")));
+            query.prepare(QString("SELECT a.Appellation, t.type FROM Appellation AS a "
+                                  "INNER JOIN AppellationType AS t ON a.Type = t.Id WHERE a.ID = %1").arg(dialog->selectedIntField("Appellation")));
             query.exec();
             if (query.first()) {
-                lineEdit().at(indexOf("Appelation"))->setText(query.value("Appelation").toString());
-                lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());}
+                lineEdit().at(indexOf("Appellation"))->setText(query.value("Appellation").toString());
+                lineEdit().at(indexOf("AppellationType"))->setText(query.value("Type").toString());}
             fConnectWineId = true;
         }
     }
@@ -234,11 +234,11 @@ void BottleDialog::setInitialData(QSqlRecord rec)
 
     if (wineId !=0) {
         QSqlQuery query;
-        query.prepare(QString("SELECT w.Wine, d.Domaine FROM Wine AS w, Domaine AS d "
-                              "WHERE (w.Domaine = d.Id) AND (w.Id = %1)").arg(wineId));
+        query.prepare(QString("SELECT w.Wine, d.Winery FROM Wine AS w, Winery AS d "
+                              "WHERE (w.Winery = d.Id) AND (w.Id = %1)").arg(wineId));
         query.exec();
         if (query.first()) {
-            lineEdit().at(indexOf("Winery"))->setText(query.value("Domaine").toString());
+            lineEdit().at(indexOf("Winery"))->setText(query.value("Winery").toString());
             lineEdit().at(indexOf("WineName"))->setText(query.value("Wine").toString());
         }
         lineEdit().at(indexOf("WineId"))->setText(QString::number(wineId));
@@ -255,30 +255,30 @@ void BottleDialog::setEnabledActionButton(bool fEnabled)
 
 void BottleDialog::setWineIdFields()
 {
-    lineEdit().at(indexOf("Appelation"))->clear();
-    lineEdit().at(indexOf("AppelationType"))->clear();
+    lineEdit().at(indexOf("Appellation"))->clear();
+    lineEdit().at(indexOf("AppellationType"))->clear();
     lineEdit().at(indexOf("WineType"))->clear();
     if (wineId()!=0) {
         QSqlQuery query;
-        query.prepare(QString("SELECT Type, Appelation FROM Wine WHERE ID = %1").arg(wineId()));
+        query.prepare(QString("SELECT Type, Appellation FROM Wine WHERE ID = %1").arg(wineId()));
         query.exec();
         if (query.first()) {
             int typeId = query.value("Type").toInt();
-            int appelationId = query.value("Appelation").toInt();
+            int appellationId = query.value("Appellation").toInt();
             if (typeId !=0) {
-                query.prepare(QString("SELECT Type FROM Wine_Type WHERE Id = %1").arg(typeId));
+                query.prepare(QString("SELECT Type FROM WineType WHERE Id = %1").arg(typeId));
                 query.exec();
                 if (query.first())
                     lineEdit().at(indexOf("WineType"))->setText(query.value("Type").toString());
             }
-            if (appelationId !=0) {
-                query.prepare(QString("SELECT a.Appelation, t.Type FROM Appelation AS a "
-                                      "INNER JOIN Appelation_Type AS t ON a.Type = t.Id "
-                                      "WHERE a.Id = %1").arg(appelationId));
+            if (appellationId !=0) {
+                query.prepare(QString("SELECT a.Appellation, t.Type FROM Appellation AS a "
+                                      "INNER JOIN AppellationType AS t ON a.Type = t.Id "
+                                      "WHERE a.Id = %1").arg(appellationId));
                 query.exec();
                 if (query.first()) {
-                    lineEdit().at(indexOf("Appelation"))->setText(query.value("Appelation").toString());
-                    lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());
+                    lineEdit().at(indexOf("Appellation"))->setText(query.value("Appellation").toString());
+                    lineEdit().at(indexOf("AppellationType"))->setText(query.value("Type").toString());
                 }
             }
 
@@ -298,8 +298,8 @@ void BottleDialog::findWineId()
         return;}
 
     QSqlQuery query;
-    query.prepare(QString("SELECT w.Id FROM Wine AS w INNER JOIN Domaine AS d ON w.Domaine = d.Id "
-                          "WHERE (w.Wine ='%1') AND (d.DOMAINE ='%2')").arg(wineNameStr,wineryStr));
+    query.prepare(QString("SELECT w.Id FROM Wine AS w INNER JOIN Winery AS d ON w.Winery = d.Id "
+                          "WHERE (w.Wine ='%1') AND (d.Winery ='%2')").arg(wineNameStr,wineryStr));
     query.exec();
     if (query.first()) {
         int wId = query.value("Id").toInt();

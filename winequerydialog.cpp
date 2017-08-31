@@ -1,7 +1,7 @@
 #include "winequerydialog.h"
 #include <QDebug>
 
-WineQueryDialog::WineQueryDialog(QString domaineStr, QString wineStr, QSqlDatabase db, QWidget *parent, Qt::WindowFlags f)
+WineQueryDialog::WineQueryDialog(QString wineryStr, QString wineStr, QSqlDatabase db, QWidget *parent, Qt::WindowFlags f)
     :QueryDialog(parent,f)
 {
     // Create Title
@@ -11,29 +11,29 @@ WineQueryDialog::WineQueryDialog(QString domaineStr, QString wineStr, QSqlDataba
     setModelAndView(new WineModel(this,db));
 
     // Define Text and Hide selection
-    QStringList textList {tr("Domaine :"), tr("Wine :"), tr("Type :")};
+    QStringList textList {tr("Winery :"), tr("Wine :"), tr("Type :")};
     setLabelText(textList);
 
     // Populate Country Combo
-    populateCombo("Type","Wine_Type");
+    populateCombo("Type","WineType");
 
     // Field to be return
     setSelectedFieldName("Wine");
 
     // Fields to be shown
-    QStringList shownFieldNameList {"Wine","Domaine","Type"};
+    QStringList shownFieldNameList {"Wine","Winery","Type"};
     setShownFieldNames(shownFieldNameList);
 
-    // Set the initial Domaine string
+    // Set the initial Winery string
     queryLineEdit().at(1)->setText(wineStr);
-    queryLineEdit().at(0)->setText(domaineStr);
+    queryLineEdit().at(0)->setText(wineryStr);
 
     //Connect matching signals from form to slots of object
      QMetaObject::connectSlotsByName(this);
      connect(dialogButtonBox(),SIGNAL(clicked(QAbstractButton*)),this,SLOT(doAction(QAbstractButton*)));
 
-     // Select the Domaine if any
-     wineModel()->selectRecords(domaineStr,wineStr);
+     // Select the Winery if any
+     wineModel()->selectRecords(wineryStr,wineStr);
      adjustViewSize();
 }
 

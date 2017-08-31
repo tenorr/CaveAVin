@@ -70,7 +70,7 @@ void AbstractBottle::setWineType(int wineType)
     if (wineType !=0) {
          // Retrieve color and Brushtype
         QSqlQuery query;
-        query.prepare("SELECT Red, Green, Blue, BrushStyle FROM Wine_Type WHERE Id = :id");
+        query.prepare("SELECT Red, Green, Blue, BrushStyle FROM WineType WHERE Id = :id");
         query.bindValue(":id",wineType);
         if (query.exec()) {
             query.next();
@@ -171,16 +171,16 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
         rec.setValue("Millesime",millesime);
 
         index = dialog->index("PurchaseLocation");
-        rec.setValue("Purchase_Location",dialog->lineEdit().at(index)->text());
+        rec.setValue("PurchaseLocation",dialog->lineEdit().at(index)->text());
 
          index = dialog->index("PurchaseDate");
          QDate date = dialog->dateEdit().at(index)->date();
          if (date != dialog->dateEdit().at(index)->minimumDate())
-             rec.setValue("Purchase_Date",date);
-          else rec.setNull("Purchase_Date");
+             rec.setValue("PurchaseDate",date);
+          else rec.setNull("PurchaseDate");
 
           index = dialog->index("PurchasePrice");
-          rec.setValue("Purchase_Price",dialog->doubleSpinBox().at(index)->value());
+          rec.setValue("PurchasePrice",dialog->doubleSpinBox().at(index)->value());
 
           // Manage bottleType
           index = dialog->index("BottleType");

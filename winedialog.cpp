@@ -16,15 +16,15 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
     connect(buttonBox(), &QDialogButtonBox::rejected,this,&WineDialog::reject);
 
     // Set Initial Data
-    populateCombo("Type","Type","Wine_Type");
+    populateCombo("Type","Type","WineType");
     populateCombo("Region","Region","Region");
-    populateAppelationCombo();
+    populateAppellationCombo();
     setInitialData(selectedId);
     setInitialWineType(combo().at(indexOf("Type"))->currentIndex());
     setActionButtonEnabled();
 
-   lineEdit().at(indexOf("AppelationId"))->hide();
-   lineEdit().at(indexOf("DomaineId"))->hide();
+   lineEdit().at(indexOf("AppellationId"))->hide();
+   lineEdit().at(indexOf("WineryId"))->hide();
    lineEdit().at(indexOf("GrapeVariety"))->hide();
 }
 
@@ -33,13 +33,13 @@ WineModel *WineDialog::wineModel() const
     return static_cast<WineModel *>(model());
 }
 
-int WineDialog::domaineId(const QString &text, bool &fUnique)
+int WineDialog::wineryId(const QString &text, bool &fUnique)
 {
     int id=-1;
     QString str = text;
     str = str.replace("'","''");
     QSqlQuery query;
-    query.prepare(QString("SELECT Id FROM Domaine WHERE Domaine = '%1'").arg(str));
+    query.prepare(QString("SELECT Id FROM Winery WHERE Winery = '%1'").arg(str));
     query.exec();
     fUnique = query.first();
     if (fUnique) {
@@ -48,52 +48,52 @@ int WineDialog::domaineId(const QString &text, bool &fUnique)
     return id;
 }
 
-void WineDialog::populateAppelationCombo(int wineTypeId, int regionId)
+void WineDialog::populateAppellationCombo(int wineTypeId, int regionId)
 {
-    // Save Appelation Name
-    QString str = appelationStr(false);
+    // Save Appellation Name
+    QString str = appellationStr(false);
     // Update combo
-    combo().at(indexOf("Appelation"))->clear();
-    QString filter = (wineTypeId==0)? QString() :QString("Couleur = %1").arg(wineTypeId);
+    combo().at(indexOf("Appellation"))->clear();
+    QString filter = (wineTypeId==0)? QString() :QString("Colour = %1").arg(wineTypeId);
     if (regionId!=0) {
         filter.append((wineTypeId==0)? QString() : " AND ");
         filter.append(QString("Region = %1").arg(regionId));}
-    populateCombo("Appelation","Appelation","Appelation",filter);
+    populateCombo("Appellation","Appellation","Appellation",filter);
 
-    // Restore Appelation Name, if possible
+    // Restore Appellation Name, if possible
     if(!str.isEmpty()) {
-        combo()[indexOf("Appelation")]->setCurrentText(str);
-    // Clear Appelation Type Line Edit if appelation is null
-    if (combo().at(indexOf("Appelation"))->currentIndex()==0) {
-        lineEdit().at(indexOf("AppelationType"))->clear();
-        lineEdit().at(indexOf("AppelationId"))->clear();}
+        combo()[indexOf("Appellation")]->setCurrentText(str);
+    // Clear Appellation Type Line Edit if Appellation is null
+    if (combo().at(indexOf("Appellation"))->currentIndex()==0) {
+        lineEdit().at(indexOf("AppellationType"))->clear();
+        lineEdit().at(indexOf("AppellationId"))->clear();}
     }
 }
 
-void WineDialog::setAppellationFields(int appelationId)
+void WineDialog::setAppellationFields(int AppellationId)
 {
-    if (appelationId !=0) {
+    if (AppellationId !=0) {
     QSqlQuery query;
-    query.prepare(QString("SELECT a.Region, a.Couleur, t.Type FROM Appelation AS a "
-                          "INNER JOIN Appelation_Type AS t ON t.Id = a.type "
-                          "WHERE a.Id = %1").arg(appelationId));
+    query.prepare(QString("SELECT a.Region, a.Colour, t.Type FROM Appellation AS a "
+                          "INNER JOIN AppellationType AS t ON t.Id = a.type "
+                          "WHERE a.Id = %1").arg(AppellationId));
     query.exec();
     if (query.first()) {
-        lineEdit().at(indexOf("AppelationType"))->setText(query.value("Type").toString());
+        lineEdit().at(indexOf("AppellationType"))->setText(query.value("Type").toString());
         combo().at(indexOf("Region"))->setCurrentIndex(query.value("Region").toInt());
-        combo().at(indexOf("Type"))->setCurrentIndex(query.value("Couleur").toInt());
-        populateAppelationCombo(query.value("Couleur").toInt(),query.value("Region").toInt());
+        combo().at(indexOf("Type"))->setCurrentIndex(query.value("Colour").toInt());
+        populateAppellationCombo(query.value("Colour").toInt(),query.value("Region").toInt());
     }
     }
     else {
-     lineEdit().at(indexOf("AppelationType"))->clear();
+     lineEdit().at(indexOf("AppellationType"))->clear();
      combo().at(indexOf("Region"))->setCurrentIndex(0);}
 }
 
-int WineDialog::appelationId()
+int WineDialog::appellationId()
 {
-    if (!appelationStr().isEmpty()) {
-    QString str = QString("SELECT Id FROM Appelation WHERE (Appelation = '%1') ").arg(appelationStr());
+    if (!appellationStr().isEmpty()) {
+    QString str = QString("SELECT Id FROM Appellation WHERE (Appellation = '%1') ").arg(appellationStr());
 
     // Don't filter the region if no Region displayed
     if (regionId()!=0)
@@ -108,9 +108,9 @@ int WineDialog::appelationId()
     return 0;
 }
 
-QString WineDialog::appelationStr(bool fQuery)
+QString WineDialog::appellationStr(bool fQuery)
 {
-    QString str = combo().at(indexOf("Appelation"))->currentText();
+    QString str = combo().at(indexOf("Appellation"))->currentText();
     if (fQuery)
         str= str.replace("'","''");
     return str;
@@ -131,23 +131,23 @@ void WineDialog::setInitialData(int id)
     // Execute standard settings
     AbstractModelFormDialog::setInitialData(id);
 
-    // Find Domaine Name and fill the form field
-    int domaineId = lineEdit().at(indexOf("Domaine"))->text().toInt();
+    // Find Winery Name and fill the form field
+    int wineryId = lineEdit().at(indexOf("Winery"))->text().toInt();
     QSqlQuery query;
-    query.prepare(QString("SELECT Domaine FROM Domaine WHERE Id = %1").arg(domaineId));
+    query.prepare(QString("SELECT Winery FROM Winery WHERE Id = %1").arg(wineryId));
     query.exec();
     if (query.first()) {
-        lineEdit().at(indexOf("Domaine"))->setText(query.value("Domaine").toString());
-        lineEdit().at(indexOf("DomaineId"))->setText(QString::number(domaineId));}
+        lineEdit().at(indexOf("Winery"))->setText(query.value("Winery").toString());
+        lineEdit().at(indexOf("WineryId"))->setText(QString::number(wineryId));}
     else
-        lineEdit().at(indexOf("Domaine"))->clear();
+        lineEdit().at(indexOf("Winery"))->clear();
 
-    int appelationId = combo().at(indexOf("Appelation"))->currentIndex();
+    int AppellationId = combo().at(indexOf("Appellation"))->currentIndex();
 
-   // Set the appelation fields and Populate the appelation Combo with Filter
-    if (appelationId !=0) {
-        lineEdit().at(indexOf("AppelationId"))->setText(QString::number(appelationId));
-        setAppellationFields(appelationId);}
+   // Set the Appellation fields and Populate the Appellation Combo with Filter
+    if (AppellationId !=0) {
+        lineEdit().at(indexOf("AppellationId"))->setText(QString::number(AppellationId));
+        setAppellationFields(AppellationId);}
 }
 
 void WineDialog::doAction()
@@ -162,12 +162,12 @@ void WineDialog::doAction()
             rec.setValue("Id",lineEdit().at(indexOf("Id"))->text().toInt());
             continue;}
 
-        if (fieldName =="Domaine") {
-            rec.setValue("Domaine",lineEdit().at(indexOf("DomaineId"))->text().toInt());
+        if (fieldName =="Winery") {
+            rec.setValue("Winery",lineEdit().at(indexOf("WineryId"))->text().toInt());
             continue;}
 
-        if (fieldName =="Appelation") {
-            rec.setValue("Appelation",lineEdit().at(indexOf("AppelationId"))->text().toInt());
+        if (fieldName =="Appellation") {
+            rec.setValue("Appellation",lineEdit().at(indexOf("AppellationId"))->text().toInt());
             continue;}
 
         switch (typeOf(fieldName)) {
@@ -197,44 +197,44 @@ void WineDialog::doAction()
     accept();
 }
 
-void WineDialog::on_domaineButton_clicked()
+void WineDialog::on_wineryButton_clicked()
 {
-    DomaineQueryDialog * dialog = new DomaineQueryDialog(lineEdit().at(indexOf("Domaine"))->text(),wineModel()->database());
+    WineryQueryDialog * dialog = new WineryQueryDialog(lineEdit().at(indexOf("Winery"))->text(),wineModel()->database());
      if (dialog->exec() == QDialog::Accepted) {
-         lineEdit().at(indexOf("DomaineId"))->setText(QString::number(dialog->selectedId()));
-         lineEdit().at(indexOf("Domaine"))->setText(dialog->selectedName());}
+         lineEdit().at(indexOf("WineryId"))->setText(QString::number(dialog->selectedId()));
+         lineEdit().at(indexOf("Winery"))->setText(dialog->selectedName());}
      dialog->deleteLater();
 }
 
-void WineDialog::on_domaineLineEdit_textEdited(const QString &text)
+void WineDialog::on_wineryLineEdit_textEdited(const QString &text)
 {
     bool fUnique;
-    int dId = domaineId(text,fUnique);
+    int dId = wineryId(text,fUnique);
     if (fUnique)
-        lineEdit().at(indexOf("DomaineId"))->setText(QString::number(dId));
+        lineEdit().at(indexOf("WineryId"))->setText(QString::number(dId));
     else
-        lineEdit().at(indexOf("DomaineId"))->clear();
+        lineEdit().at(indexOf("WineryId"))->clear();
 }
 
-void WineDialog::on_appelationButton_clicked()
+void WineDialog::on_appellationButton_clicked()
 {
-    AppelationQueryDialog *dialog = new AppelationQueryDialog(combo().at(indexOf("Appelation"))->currentText(),wineModel()->database());
+    AppellationQueryDialog *dialog = new AppellationQueryDialog(combo().at(indexOf("Appellation"))->currentText(),wineModel()->database());
     if (dialog->exec() == QDialog::Accepted) {
        int aId = dialog->selectedId();
-       setCombosFromAppelationId(aId);
-       lineEdit().at(indexOf("AppelationId"))->setText(QString::number(aId));
+       setCombosFromAppellationId(aId);
+       lineEdit().at(indexOf("AppellationId"))->setText(QString::number(aId));
     }
     dialog->deleteLater();
 }
 
-void WineDialog::on_appelationComboBox_activated(int index)
+void WineDialog::on_appellationComboBox_activated(int index)
 {
     if (index!=-1) {
-        int aId = appelationId();
+        int aId = appellationId();
         if (aId !=0)
-            lineEdit().at(indexOf("AppelationId"))->setText(QString::number(aId));
+            lineEdit().at(indexOf("AppellationId"))->setText(QString::number(aId));
         else
-            lineEdit().at(indexOf("AppelationId"))->clear();
+            lineEdit().at(indexOf("AppellationId"))->clear();
         setAppellationFields(aId);
     }
 }
@@ -242,24 +242,24 @@ void WineDialog::on_appelationComboBox_activated(int index)
 void WineDialog::on_regionComboBox_activated(int index)
 {
     if (index !=-1)
-       // Populate Appelation Combo according to Region and Wine Type
-        populateAppelationCombo(wineTypeId(),index);
+       // Populate Appellation Combo according to Region and Wine Type
+        populateAppellationCombo(wineTypeId(),index);
 }
 
 void WineDialog::on_typeComboBox_activated(int index)
 {
     if (index !=-1)
-        // Populate Appelation Combo according to Region and Wine Type
-        populateAppelationCombo(index,regionId());
+        // Populate Appellation Combo according to Region and Wine Type
+        populateAppellationCombo(index,regionId());
 }
 
-void WineDialog::on_appelationIdLineEdit_textChanged(const QString &text)
+void WineDialog::on_appellationIdLineEdit_textChanged(const QString &text)
 {
        setActionButtonEnabled();
     Q_UNUSED(text)
 }
 
-void WineDialog::on_domaineIdLineEdit_textChanged(const QString &text)
+void WineDialog::on_wineryIdLineEdit_textChanged(const QString &text)
 {
         setActionButtonEnabled();
         Q_UNUSED(text)
@@ -293,25 +293,25 @@ void WineDialog::on_grapeVarietyButton_clicked()
 void WineDialog::setActionButtonEnabled()
 {
     QPushButton *button = buttonBox()->findChild<QPushButton *>("actionButton");
-    button->setEnabled(!lineEdit().at(indexOf("AppelationId"))->text().isEmpty() && !lineEdit().at(indexOf("DomaineId"))->text().isEmpty());
+    button->setEnabled(!lineEdit().at(indexOf("AppellationId"))->text().isEmpty() && !lineEdit().at(indexOf("WineryId"))->text().isEmpty());
 }
 
-void WineDialog::setCombosFromAppelationId(const int &appelationId)
+void WineDialog::setCombosFromAppellationId(const int &AppellationId)
 {
     int wineTypeId =0;
     int regionId=0;
-    QString appelationStr;
+    QString AppellationStr;
 
-    if (appelationId > 0) {
-        // Find Wine Type and Region from Appelation
+    if (AppellationId > 0) {
+        // Find Wine Type and Region from Appellation
         QSqlQuery query;
-        query.prepare(QString("SELECT Appelation, Region, Couleur FROM Appelation WHERE Id = %1").arg(appelationId));
+        query.prepare(QString("SELECT Appellation, Region, Colour FROM Appellation WHERE Id = %1").arg(AppellationId));
         query.exec();
 
         if (query.first()) {
-            wineTypeId = query.value("Couleur").toInt();
+            wineTypeId = query.value("Colour").toInt();
             regionId = query.value("Region").toInt();
-            appelationStr = query.value("Appelation").toString();
+            AppellationStr = query.value("Appellation").toString();
                }
     }
 
@@ -325,10 +325,10 @@ void WineDialog::setCombosFromAppelationId(const int &appelationId)
     else
         combo().at(indexOf("Region"))->clear();
 
-    populateAppelationCombo(wineTypeId,regionId);
-    if (!appelationStr.isEmpty()) {
-        combo().at(indexOf("Appelation"))->setCurrentText(appelationStr);
-        setAppellationFields(appelationId);}
+    populateAppellationCombo(wineTypeId,regionId);
+    if (!AppellationStr.isEmpty()) {
+        combo().at(indexOf("Appellation"))->setCurrentText(AppellationStr);
+        setAppellationFields(AppellationId);}
 
     setActionButtonEnabled();
 }

@@ -75,7 +75,7 @@ QSqlTableModel *WineTypeDialog::model() const
 void WineTypeDialog::setModel(QSqlTableModel *model)
 {
     // Select Table
-    model->setTable("Wine_Type");
+    model->setTable("WineType");
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     m_model = model;
