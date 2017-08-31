@@ -26,3 +26,4 @@ public slots:
 };
 
 #endif // APPELLATIONQUERYDIALOG_H
+

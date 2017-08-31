@@ -24,3 +24,4 @@ private:
 };
 
 #endif // APPELLATIONMODEL_H
+

@@ -288,3 +288,4 @@ void GrapeVarietySelectionDialog::addFavorite(int globalRow)
         tableWidget().at(indexOf("Favorite"))->sortByColumn(0,Qt::AscendingOrder);
     }
 }
+
