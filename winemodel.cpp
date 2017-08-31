@@ -4,27 +4,27 @@
 WineModel::WineModel(QObject *parent, QSqlDatabase db)
 :AbstractWineTableModel("Wine",parent,db)
 {
-    setRelation(fieldIndex("Domaine"),QSqlRelation("Domaine","Id","Domaine"));
-    setRelation(fieldIndex("Type"),QSqlRelation("Wine_Type","Id","Type"));
+    setRelation(fieldIndex("Winery"),QSqlRelation("Winery","Id","Winery"));
+    setRelation(fieldIndex("Type"),QSqlRelation("WineType","Id","Type"));
 }
 
 void WineModel::selectRecords(const QString &text1, const QString &text2, const int typeId)
 {
-    // Find domaine Ids in range
-    QVector<int> domaineId;
+    // Find Winery Ids in range
+    QVector<int> wineryId;
     QSqlQuery query;
     QString inText;
     if (!text1.isEmpty()) {
-    query.prepare(QString("SELECT Id FROM Domaine WHERE Domaine LIKE '%%1%'").arg(text1));
+    query.prepare(QString("SELECT Id FROM Winery WHERE Winery LIKE '%%1%'").arg(text1));
     query.exec();
     while (query.next()) {
-        domaineId << query.value(0).toInt();
+        wineryId << query.value(0).toInt();
     }
     // Prepare the IN clause
 
-    if (domaineId.size()>0) {
-        inText ="Wine.Domaine IN (";
-        foreach (int i, domaineId) {
+    if (wineryId.size()>0) {
+        inText ="Wine.Winery IN (";
+        foreach (int i, wineryId) {
             inText.append(QString::number(i));
             inText.append(',');
         }

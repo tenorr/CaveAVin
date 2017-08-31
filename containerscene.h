@@ -23,6 +23,7 @@ private:
     QColor color();
     Qt::BrushStyle brushStyle();
     void createContextMenu();
+    QRect decodeToQRect(const QString &text);
 
 public slots:
     void createZone();

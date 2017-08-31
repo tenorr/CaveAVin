@@ -56,7 +56,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="domaineLineEdit">
+   <widget class="QLineEdit" name="wineryLineEdit">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -89,7 +89,7 @@
      <string>Name</string>
     </property>
    </widget>
-   <widget class="QLabel" name="domaineLabel">
+   <widget class="QLabel" name="wineryLabel">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -99,7 +99,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Domaine</string>
+     <string>Winery</string>
     </property>
    </widget>
    <widget class="QLabel" name="typeLabel">
@@ -115,7 +115,7 @@
      <string>Type</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="domaineButton">
+   <widget class="QPushButton" name="wineryButton">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -128,7 +128,7 @@
      <string>?</string>
     </property>
    </widget>
-   <widget class="QLabel" name="appelationLabel">
+   <widget class="QLabel" name="appellationLabel">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -138,10 +138,10 @@
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Appelation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Appellation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="appelationComboBox">
+   <widget class="QComboBox" name="appellationComboBox">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -151,7 +151,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="appelationButton">
+   <widget class="QPushButton" name="appellationButton">
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -164,7 +164,7 @@
      <string>?</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="appelationTypeLineEdit">
+   <widget class="QLineEdit" name="appellationTypeLineEdit">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -187,7 +187,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="domaineIdLineEdit">
+   <widget class="QLineEdit" name="wineryIdLineEdit">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -203,7 +203,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="appelationIdLineEdit">
+   <widget class="QLineEdit" name="appellationIdLineEdit">
     <property name="geometry">
      <rect>
       <x>540</x>

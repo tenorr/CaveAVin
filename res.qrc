@@ -2,8 +2,8 @@
     <qresource prefix="/form">
         <file>bottleDialog.ui</file>
         <file>queryForm.ui</file>
-        <file>domaineForm.ui</file>
         <file>wineForm.ui</file>
         <file>grapevarietyform.ui</file>
+        <file>wineryForm.ui</file>
     </qresource>
 </RCC>

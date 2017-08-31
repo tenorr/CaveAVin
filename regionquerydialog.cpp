@@ -26,14 +26,14 @@ RegionQueryDialog::RegionQueryDialog(QString regionStr, QSqlDatabase db,QWidget 
     QStringList shownFieldNameList {"Region","Country"};
     setShownFieldNames(shownFieldNameList);
 
-    // Set the initial Domaine string
+    // Set the initial Winery string
     queryLineEdit().at(0)->setText(regionStr);
 
     //Connect matching signals from form to slots of object
      QMetaObject::connectSlotsByName(this);
 
-     // Select the Domaine if any
-     //regionModel()->selectRecords(domaineStr);
+     // Select the Winery if any
+     //regionModel()->selectRecords(wineryStr);
 }
 
 RegionModel *RegionQueryDialog::regionModel() const

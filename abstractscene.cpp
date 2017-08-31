@@ -31,7 +31,7 @@ void AbstractScene::setName(GraphicsText *name)
 {
     // Find Name in dataBase
     QSqlQuery query;
-    query.prepare(QString("SELECT %1_Name FROM %1 WHERE Id = :id").arg(tableName()));
+    query.prepare(QString("SELECT %1Name FROM %1 WHERE Id = :id").arg(tableName()));
     query.bindValue(":id",id());
     query.exec();
     query.next();
@@ -57,9 +57,9 @@ void AbstractScene::setName(QString text)
 {
         // Update Data Base
         QSqlQuery query;
-        query.prepare(QString("UPDATE %1 SET %1_Name = :%1_name WHERE Id = :id").arg(tableName()));
+        query.prepare(QString("UPDATE %1 SET %1Name = :%1name WHERE Id = :id").arg(tableName()));
         query.bindValue(":id",id());
-        query.bindValue(QString(":%1_name").arg(tableName()),text);
+        query.bindValue(QString(":%1name").arg(tableName()),text);
         query.exec();
 }
 

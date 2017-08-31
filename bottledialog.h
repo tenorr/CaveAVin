@@ -1,7 +1,7 @@
 #ifndef BOTTLEDIALOG_H
 #define BOTTLEDIALOG_H
 
-#include "domainequerydialog.h"
+#include "wineryquerydialog.h"
 #include "winequerydialog.h"
 #include <QSqlTableModel>
 #include <QSqlQuery>
@@ -53,6 +53,7 @@ private slots:
     void on_wineryLineEdit_textChanged(const QString &text);
     void on_wineNameLineEdit_textChanged(const QString &text);
     void on_labelImageLineEdit_textChanged(const QString &text);
+    void on_bottleTypeComboBox_currentIndexChanged(int index);
     // void replyFinished(QNetworkReply *reply);
 
 private:
