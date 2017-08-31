@@ -11,6 +11,8 @@ class BottleTableModel : public AbstractWineTableModel
 public:
     BottleTableModel(QObject *parent = Q_NULLPTR, QSqlDatabase db = QSqlDatabase());
 
+    void repositionBottle(int id);
+
 public slots:
     void changeRectangleData(QRect data, int id);
     void changeContainerRectangleData(QRect data, int id);

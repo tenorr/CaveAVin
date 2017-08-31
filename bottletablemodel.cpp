@@ -30,31 +30,15 @@ void BottleTableModel::changeContainerRectangleData(QRect data, int id)
     int row = rowPosition(id);
 
     if (row !=-1) {
-    QSqlRecord rec = record(row);
-    rec.setValue("ContainerX",data.x());
-    rec.setValue("ContainerY",data.y());
-    rec.setValue("ContainerR",data.width());
-
-    // Retrieve Container Ratios
-    // Prepare Query to retrieve width and height
-    QSqlQuery query;
-    query.prepare("SELECT XRatio, YRatio FROM Container WHERE Id = :id");
-    query.bindValue(":id",rec.value("Container").toInt());
-    query.exec();
-    query.next();
-    qreal xRatio = query.value(0).toDouble();
-    qreal yRatio = query.value(1).toDouble();
-
-    // Store new coordinates in Room
-    rec.setValue("RoomX",int(double(data.x())/xRatio));
-    rec.setValue("RoomY",int(double(data.y())/yRatio));
-
-    setRecord(row,rec);
-    submitAll();
-    // Emit signal for repositioning the bootle in the Room
-    QPoint pos = QPoint(int(double(data.x())/xRatio),int(double(data.y())/yRatio));
-    emit bottleReposioned(id, pos);
+        QSqlRecord rec = record(row);
+        rec.setValue("ContainerX",data.x());
+        rec.setValue("ContainerY",data.y());
+        rec.setValue("ContainerR",data.width());
+        setRecord(row,rec);
+        submitAll();
+        repositionBottle(id);
     }
+
 }
 
 void BottleTableModel::changeContainer(int bottleId, int newContainerId)
@@ -91,6 +75,38 @@ void BottleTableModel::deleteBottle(int bottleId)
     removeRow(row);
     submitAll();
     }
+}
 
+void BottleTableModel::repositionBottle(int id)
+{
+    int row = rowPosition(id);
 
+    if (row !=-1) {
+
+        QSqlRecord rec = record(row);
+
+         // Retrieve Container Ratios
+        QSqlQuery query;
+        query.prepare("SELECT XRatio, YRatio FROM Container WHERE Id = :id");
+        query.bindValue(":id",rec.value("Container").toInt());
+        query.exec();
+        if (query.first()) {
+            qreal xRatio = query.value("XRatio").toDouble();
+            qreal yRatio = query.value("YRatio").toDouble();
+
+            // Store new coordinates in Room
+            int xRoom = int(double(rec.value("ContainerX").toInt())/xRatio);
+            int yRoom = int(double(rec.value("ContainerY").toInt())/yRatio);
+
+            rec.setValue("RoomX",xRoom);
+            rec.setValue("RoomY",yRoom);
+
+            setRecord(row,rec);
+            submitAll();
+
+            // Emit signal for repositioning the bottle in the Room
+            QPoint pos = QPoint(xRoom,yRoom);
+            emit bottleReposioned(id, pos);
+        }
+    }
 }

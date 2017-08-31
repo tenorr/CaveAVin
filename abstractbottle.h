@@ -35,7 +35,6 @@ public:
     void setContextMenu(QMenu *contextMenu);
 
     bool changeBottleData(QSqlRecord &rec, int row);
-
     int findWineTypeOf(int wineId);
 
 public slots:

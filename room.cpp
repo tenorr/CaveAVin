@@ -83,6 +83,7 @@ void Room::createBottle()
 
 void Room::repositionBottle(int bottleId, QPoint pos)
 {
+    bool fFound = false;
     // Find the bottle in the scene
     QList<QGraphicsItem *> itemList = items();
     foreach (QGraphicsItem * item, itemList) {
@@ -90,8 +91,18 @@ void Room::repositionBottle(int bottleId, QPoint pos)
             Bottle *bottle = static_cast<Bottle *>(item);
             if (bottle->id() == bottleId) {
                 bottle->setPos(pos);
+                fFound = true;
                 break;
             }
+        }
+    }
+    if (!fFound) {
+        // Retrieve the record of the bottle
+           int row = bottleModel()->rowPosition(bottleId);
+           if (row !=-1) {
+               // Add a new bottle if exists
+               QSqlRecord rec = bottleModel()->record(row);
+               addBottle(rec);
         }
     }
 }

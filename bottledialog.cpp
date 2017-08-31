@@ -198,9 +198,9 @@ void BottleDialog::setInitialData(QSqlRecord rec)
 
     //Initialise Widgets
     lineEdit().at(indexOf("Bottle"))->setText(QString::number(rec.value("Id").toInt()));
-    lineEdit().at(indexOf("PurchaseLocation"))->setText(rec.value("Purchase_Location").toString());
-    doubleSpinBox().at(indexOf("PurchasePrice"))->setValue(rec.value("Purchase_Price").toDouble());
-    dateEdit().at(indexOf("PurchaseDate"))->setDate((rec.value("Purchase_Date").toDateTime()).date());
+    lineEdit().at(indexOf("PurchaseLocation"))->setText(rec.value("PurchaseLocation").toString());
+    doubleSpinBox().at(indexOf("PurchasePrice"))->setValue(rec.value("PurchasePrice").toDouble());
+    dateEdit().at(indexOf("PurchaseDate"))->setDate((rec.value("PurchaseDate").toDateTime()).date());
 
     // Set Photo Label and load image if exist
     setPhoto();

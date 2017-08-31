@@ -9,6 +9,7 @@ ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
     setBottleModel(room.bottleModel());
     setZoneModel(room.zoneModel());
     setTableName("Container");
+    setRoomId(room.id());
 
     // Store container dimensions
          setRatio();
@@ -25,8 +26,6 @@ ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
 
    // Create Context Menu
        createContextMenu();
-
-
 
    // Populate Container with zones
           for(int i=0;i<zoneModel()->rowCount();i++) {
@@ -66,7 +65,7 @@ void ContainerScene::createContextMenu()
 {
     QMenu * menu = new QMenu;
     menu->addAction(tr("Create Zone"), this,SLOT(createZone()));
-    menu->addAction(tr("Create Bottle"));
+    menu->addAction(tr("Create Bottle"), this,SLOT(createBottle()));
     setContextMenu(menu);
 }
 
@@ -109,41 +108,35 @@ void ContainerScene::createBottle()
     QSqlRecord rec = bottleModel()->record();
     int newId = bottleModel()->newId();
     rec.setValue("Id",newId);
-    BottleDialog* dialog = new BottleDialog(db(),rec);
-    if (dialog->exec()==QDialog::Accepted) {
-        rec = bottleModel()->record();
-        rec.setValue("Id",newId);
-        rec.setValue("Wine",dialog->wineId());
-        int index = dialog->index("Millesime");
-        int millesime = dialog->combo().at(index)->currentText().toInt();
-        rec.setValue("Millesime",millesime);
-        rec.setValue("Container", id());
-        rec.setValue("ContainerX",contextPosition().x());
-        rec.setValue("ContainerY",contextPosition().y());
-        rec.setValue("RoomR",40);
-        rec.setValue("ContainerR",40);
+    rec.setValue("PurchaseDate",QDate::currentDate());
+    rec.setValue("Room", roomId());
+    rec.setValue("Container", id());
+    rec.setValue("ContainerX",contextPosition().x());
+    rec.setValue("ContainerY",contextPosition().y());
+    rec.setValue("RoomR",40);
+    rec.setValue("ContainerR",40);
 
-     // Retrieve information about container
-        QSqlQuery query;
-        query.prepare("SELECT Room FROM Container WHERE Id = :id");
-        query.bindValue(":id",id());
-        query.exec();
-        query.next();
-        rec.setValue("Room",query.value(0));
-        /*
-        QGraphicsItem *item = itemAt(contextPosition(),QTransform());
-        if (item !=0) {
-            if (item->type()=QGraphicsItem::UserType+2) {
-                    int zoneId = static_cast<Zone *>(item)->id();
-                    rec.setValue("Zone",zoneId);
-            }
-        }
-        */
-        bottleModel()->insertRecord(-1,rec);
-        bottleModel()->submitAll();
+    ContainerBottle *bottle = new ContainerBottle(rec, this);
+
+    // Create a new SQL record if dialog accepted and add bottle
+    if (bottle->changeBottleData(rec,-1)) {
+        addBottle(rec);
+        bottleModel()->select();
+
+        // Create a Bottle in the Room thanks to repositonBottle Procedure of BottleTableModel class (signal - slot)
+        bottleModel()->repositionBottle(newId);
     }
-    delete dialog;
-    addBottle(rec);
+    delete bottle;
+}
+
+int ContainerScene::roomId() const
+{
+    return m_roomId;
+}
+
+void ContainerScene::setRoomId(int roomId)
+{
+    m_roomId = roomId;
 }
 
 

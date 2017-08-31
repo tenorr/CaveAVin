@@ -77,6 +77,7 @@ void AbstractScene::deleteBottle(int bottleId)
         }
 }
 
+
 void AbstractScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
 {
     if (contextMenuEvent) {
@@ -128,6 +129,7 @@ void AbstractScene::wineTypeEvent(WineTypeEvent *event)
         }
      }
 }
+
 
 ZoneTableModel *AbstractScene::zoneModel() const
 {

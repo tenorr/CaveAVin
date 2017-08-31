@@ -19,6 +19,9 @@ public:
 
     void setRatio();
 
+    int roomId() const;
+    void setRoomId(int roomId);
+
 private:
     QColor color();
     Qt::BrushStyle brushStyle();
@@ -32,6 +35,9 @@ public slots:
 
 signals:
     void bottleToBeDeleted(int bottleId);
+
+private:
+    int m_roomId;
 
 };
 
