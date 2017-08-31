@@ -69,3 +69,4 @@ void WineryQueryDialog::doAction(QAbstractButton *button)
     dialog->deleteLater();
 }
 
+

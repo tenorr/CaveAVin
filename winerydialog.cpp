@@ -66,3 +66,4 @@ void WineryDialog::doAction(QAbstractButton *button)
     accept();
 
 }
+
