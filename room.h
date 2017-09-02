@@ -18,6 +18,7 @@ public:
 
     ContainerTableModel *containerModel() const;
     void setContainerModel(ContainerTableModel *containerModel);
+    void moveBottle(int bottleId, QPointF move);
 
 public slots:
     void createContainer();

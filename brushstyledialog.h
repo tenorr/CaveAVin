@@ -8,7 +8,7 @@
 #include <QGraphicsView>
 #include <QAbstractGraphicsShapeItem>
 
-#define RECTSIZE 90
+#define RECTSIZE 120
 
 class BrushStyleDialog : public QDialog
 {

@@ -12,15 +12,21 @@ class ContainerScene : public AbstractScene
 {
     Q_OBJECT
 public:
-    ContainerScene(int containerId, Room &room,QObject *parent = Q_NULLPTR);
+    ContainerScene(int containerId, Room *room,QObject *parent = Q_NULLPTR);
 
     void addZone(QSqlRecord rec);
     void addBottle(QSqlRecord rec);
 
-    void setRatio();
+    void setTableRatio();
 
     int roomId() const;
     void setRoomId(int roomId);
+
+    Room *room() const;
+    void setRoom(Room *room);
+
+    QPointF ratio() const;
+    void setRatio(const QPointF &ratio);
 
 private:
     QColor color();
@@ -32,12 +38,15 @@ public slots:
     void createZone();
     void deleteZone(int zoneId);
     void createBottle();
+    void requestBottleRepositioning(int bottleId, QPointF move);
 
 signals:
     void bottleToBeDeleted(int bottleId);
 
 private:
     int m_roomId;
+    QPointF m_ratio;
+    Room * m_room;
 
 };
 

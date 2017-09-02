@@ -5,7 +5,7 @@ AbstractScene::AbstractScene(int id, QObject *parent)
     :QGraphicsScene(parent)
 {
     setId(id);
-    setSceneRect(0,0,1980,1220);
+
 }
 
 AbstractScene::~AbstractScene()

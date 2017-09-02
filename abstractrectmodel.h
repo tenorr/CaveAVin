@@ -21,7 +21,7 @@ public:
 public slots:
      void changeColor(QColor color, int id);
      void changeBrushStyle(Qt::BrushStyle bs, int id);
-     void changeRectangleData(QRect data, int id);
+     virtual void changeRectangleData(QRect data, int id);
 
 private:
     QString m_parentName;

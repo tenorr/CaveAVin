@@ -1,4 +1,5 @@
 #include "zonetablemodel.h"
+#include <QDebug>
 
 ZoneTableModel::ZoneTableModel(QObject *parent, QSqlDatabase db)
     : AbstractRectModel("Zone",parent,db)
@@ -17,4 +18,3 @@ void ZoneTableModel::deleteContainerZones(int containerId)
     }
     submitAll();
 }
-

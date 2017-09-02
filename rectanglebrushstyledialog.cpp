@@ -18,8 +18,6 @@ void RectangleBrushStyleDialog::setPattern(QColor color, Qt::BrushStyle initialB
         // Select the current brushStyle
         if (initialBrushstyle == (Qt::BrushStyle) i)
             item->setSelected(true);
-
-       // item->setFlag(QGraphicsItem::ItemIsFocusable);
         item->setPos(10+(i%3)*(RECTSIZE+10),10+(i/3)*(RECTSIZE+10));
     }
 }

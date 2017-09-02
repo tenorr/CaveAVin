@@ -1,3 +1,5 @@
 
 *.ldb
 *.autosave
+*.user
+WineCave.pro.user

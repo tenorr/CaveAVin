@@ -1,18 +1,19 @@
 #include "containerscene.h"
 #include <QDebug>
 
-ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
+ContainerScene::ContainerScene(int containerId, Room *room, QObject *parent)
     : AbstractScene(containerId, parent)
 {
     // Set SQL Tables
-    setDb(room.db());
-    setBottleModel(room.bottleModel());
-    setZoneModel(room.zoneModel());
+    setDb(room->db());
+    setBottleModel(room->bottleModel());
+    setZoneModel(room->zoneModel());
     setTableName("Container");
-    setRoomId(room.id());
+    setRoomId(room->id());
+    setRoom(room);
 
     // Store container dimensions
-         setRatio();
+       setTableRatio();
 
     // Add color and brush style
        QPen pen;
@@ -129,6 +130,34 @@ void ContainerScene::createBottle()
     delete bottle;
 }
 
+void ContainerScene::requestBottleRepositioning(int bottleId, QPointF move)
+{
+    // Calculate new Position and Reposition
+    QPointF newPosition = QPointF(move.x()/ratio().x(), move.y()/ratio().y());
+    qDebug() << room();
+    room()->moveBottle(bottleId,newPosition);
+}
+
+QPointF ContainerScene::ratio() const
+{
+    return m_ratio;
+}
+
+void ContainerScene::setRatio(const QPointF &ratio)
+{
+    m_ratio = ratio;
+}
+
+Room *ContainerScene::room() const
+{
+    return m_room;
+}
+
+void ContainerScene::setRoom(Room *room)
+{
+    m_room = room;
+}
+
 int ContainerScene::roomId() const
 {
     return m_roomId;
@@ -140,7 +169,7 @@ void ContainerScene::setRoomId(int roomId)
 }
 
 
-void ContainerScene::setRatio()
+void ContainerScene::setTableRatio()
 {
 
     // Prepare Query to retrieve width and height
@@ -155,6 +184,9 @@ void ContainerScene::setRatio()
 
     qreal xRatio = width()/query.value(0).toInt();
     qreal yRatio = height()/query.value(1).toInt();
+
+    // Set Ratio in object
+    setRatio(QPointF(xRatio,yRatio));
 
     // Store ratios in SQL Table
     query.prepare(QString("UPDATE Container SET XRatio = :XRatio , YRatio = :YRatio WHERE Id = :id"));
@@ -177,6 +209,7 @@ void ContainerScene::addZone(QSqlRecord rec)
         connect(zone,&Zone::brushStyleChanged,zoneModel(),&ZoneTableModel::changeBrushStyle);
         connect(zone,&Zone::rectangleDataChanged,zoneModel(),&ZoneTableModel::changeRectangleData);
         connect(zone,&Zone::itemToBeDeleted,this,&ContainerScene::deleteZone);
+        connect(zone,&Zone::bottlePositionChanged,this,&ContainerScene::requestBottleRepositioning);
     }
 }
 

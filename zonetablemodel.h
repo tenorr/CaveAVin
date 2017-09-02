@@ -12,7 +12,6 @@ public:
     ZoneTableModel(QObject *parent = Q_NULLPTR, QSqlDatabase db = QSqlDatabase());
 
     void deleteContainerZones(int containerId);
-
 };
 
 #endif // ZONETABLEMODEL_H

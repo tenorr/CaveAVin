@@ -15,10 +15,19 @@ Room::Room(ContainerTableModel *containerModel, BottleTableModel *bottleModel, Z
  // Set Room Id & Name
     setName(new GraphicsText);
 
+
  // Add rectangle and name into scene
+
+    // Retrieve parent geometry and set scene rectangle
+    QSize sceneRectSize = static_cast<QWidget *>(parent)->size();
+    setSceneRect(QRectF(QPointF(0,0),sceneRectSize));
+
+    // Draw a rectangle to border it
+    QSizeF rectangleSize = QSizeF(sceneRectSize) - QSizeF(20,25);
+
     QPen pen;
     pen.setWidth(10);
-    addRect(10,10,1960,1200,pen);
+    addRect(QRectF(QPointF(10,10),rectangleSize),pen);
 
     // Create Context Menu
     createContextMenu();
@@ -155,6 +164,21 @@ ContainerTableModel *Room::containerModel() const
 void Room::setContainerModel(ContainerTableModel *containerModel)
 {
     m_containerModel = containerModel;
+}
+
+void Room::moveBottle(int bottleId, QPointF move)
+{
+    // Find the bottle in the scene
+    QList<QGraphicsItem *> itemList = this->items();
+     foreach (QGraphicsItem * item, itemList) {
+        if (item->type()== QGraphicsItem::UserType +1) {
+            Bottle *bottle = static_cast<Bottle *>(item);
+            if (bottle->id() == bottleId) {
+                bottle->setPos(bottle->pos()+move);
+                break;
+            }
+        }
+    }
 }
 
 
