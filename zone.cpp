@@ -17,7 +17,7 @@ void Zone::createBottle()
 {
     ContainerScene *containerScene = static_cast<ContainerScene *>(scene());
     // Create the Container Bottle
-    ContainerBottle * bottle = containerScene->createContainerBottle(contextPosition(),id());
+    ContainerBottle * bottle = containerScene->createContainerBottle(contextPosition());
     // Set container Bottle to Zone
     bottle->changeZone(this);
 }

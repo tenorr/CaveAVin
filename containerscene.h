@@ -29,7 +29,7 @@ public:
     QPointF ratio() const;
     void setRatio(const QPointF &ratio);
 
-    ContainerBottle *createContainerBottle(QPointF position, int zoneId=0);
+    ContainerBottle *createContainerBottle(QPointF position);
     void requestBottlePositioning(int bottleId, QPointF containerPos);
 
 private:

@@ -109,7 +109,7 @@ void ContainerScene::createBottle()
     createContainerBottle(contextPosition());
 }
 
-ContainerBottle * ContainerScene::createContainerBottle(QPointF position, int zoneId)
+ContainerBottle * ContainerScene::createContainerBottle(QPointF position)
 {
     // Retrieve SQL record
     QSqlRecord rec = bottleModel()->record();

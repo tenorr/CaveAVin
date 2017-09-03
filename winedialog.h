@@ -1,18 +1,18 @@
 #ifndef WINEDIALOG_H
 #define WINEDIALOG_H
 
-#include "abstractmodelformdialog.h"
 #include "wineryquerydialog.h"
 #include "appellationquerydialog.h"
 #include "regionquerydialog.h"
 #include "winemodel.h"
 #include "grapevarietyselectiondialog.h"
 #include "winetypeevent.h"
+#include "photoformdialog.h"
 
 #include <QSqlQuery>
 
 
-class WineDialog : public AbstractModelFormDialog
+class WineDialog : public PhotoFormDialog
 {
     Q_OBJECT
 public:
@@ -48,6 +48,7 @@ private:
     void setAppellationFields(int appellationId=0);
     void setActionButtonEnabled();
     void setCombosFromAppellationId(const int & appellationId);
+
 
 private:
     int m_initialWineType;

@@ -564,16 +564,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="photoLabel">
-   <property name="geometry">
-    <rect>
-     <x>860</x>
-     <y>30</y>
-     <width>361</width>
-     <height>401</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="labelImageLineEdit">
    <property name="geometry">
     <rect>
@@ -738,6 +728,19 @@
      <string>cm</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="photoLabel">
+   <property name="geometry">
+    <rect>
+     <x>890</x>
+     <y>20</y>
+     <width>361</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
+   </property>
   </widget>
  </widget>
  <resources/>
