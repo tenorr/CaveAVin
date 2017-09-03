@@ -9,7 +9,7 @@ BottleTableModel::BottleTableModel(QObject *parent, QSqlDatabase db)
 }
 
 
-void BottleTableModel::changeRectangleData(QRect data, int id)
+void BottleTableModel::changeRectangleData(QRectF data, int id)
 {
     // Change Rectangle Data
     int row = rowPosition(id);
@@ -24,7 +24,7 @@ void BottleTableModel::changeRectangleData(QRect data, int id)
     }
 }
 
-void BottleTableModel::changeContainerRectangleData(QRect data, int id)
+void BottleTableModel::changeContainerRectangleData(QRectF data, int id)
 {
     // Change Rectangle Data
     int row = rowPosition(id);
@@ -36,7 +36,6 @@ void BottleTableModel::changeContainerRectangleData(QRect data, int id)
         rec.setValue("ContainerR",data.width());
         setRecord(row,rec);
         submitAll();
-        repositionBottle(id);
     }
 
 }
@@ -77,36 +76,3 @@ void BottleTableModel::deleteBottle(int bottleId)
     }
 }
 
-void BottleTableModel::repositionBottle(int id)
-{
-    int row = rowPosition(id);
-
-    if (row !=-1) {
-
-        QSqlRecord rec = record(row);
-
-         // Retrieve Container Ratios
-        QSqlQuery query;
-        query.prepare("SELECT XRatio, YRatio FROM Container WHERE Id = :id");
-        query.bindValue(":id",rec.value("Container").toInt());
-        query.exec();
-        if (query.first()) {
-            qreal xRatio = query.value("XRatio").toDouble();
-            qreal yRatio = query.value("YRatio").toDouble();
-
-            // Store new coordinates in Room
-            int xRoom = int(double(rec.value("ContainerX").toInt())/xRatio);
-            int yRoom = int(double(rec.value("ContainerY").toInt())/yRatio);
-
-            rec.setValue("RoomX",xRoom);
-            rec.setValue("RoomY",yRoom);
-
-            setRecord(row,rec);
-            submitAll();
-
-            // Emit signal for repositioning the bottle in the Room
-            QPoint pos = QPoint(xRoom,yRoom);
-            emit bottleReposioned(id, pos);
-        }
-    }
-}

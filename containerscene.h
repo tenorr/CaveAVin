@@ -7,6 +7,7 @@
 #include "zone.h"
 
 class Room;
+class ContainerBottle;
 
 class ContainerScene : public AbstractScene
 {
@@ -15,7 +16,7 @@ public:
     ContainerScene(int containerId, Room *room,QObject *parent = Q_NULLPTR);
 
     void addZone(QSqlRecord rec);
-    void addBottle(QSqlRecord rec);
+    ContainerBottle *addBottle(QSqlRecord rec);
 
     void setTableRatio();
 
@@ -28,6 +29,9 @@ public:
     QPointF ratio() const;
     void setRatio(const QPointF &ratio);
 
+    ContainerBottle *createContainerBottle(QPointF position, int zoneId=0);
+    void requestBottlePositioning(int bottleId, QPointF containerPos);
+
 private:
     QColor color();
     Qt::BrushStyle brushStyle();
@@ -38,7 +42,6 @@ public slots:
     void createZone();
     void deleteZone(int zoneId);
     void createBottle();
-    void requestBottleRepositioning(int bottleId, QPointF move);
 
 signals:
     void bottleToBeDeleted(int bottleId);

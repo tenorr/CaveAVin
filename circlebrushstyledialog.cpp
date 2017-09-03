@@ -11,12 +11,12 @@ void CircleBrushStyleDialog::setPattern(QColor color, Qt::BrushStyle initialBrus
     // Set the 5x3 circles
     for (int i=0;i<15;i++) {
         QPen pen = QPen(color);
-        QBrush brush = QBrush(color,(Qt::BrushStyle)i);
-        QGraphicsEllipseItem *item = scene()->addEllipse(QRect(0,0,RECTSIZE,RECTSIZE),pen,brush);
+        QBrush brush = QBrush(color,Qt::BrushStyle(i));
+        QGraphicsEllipseItem *item = scene()->addEllipse(QRectF(0,0,RECTSIZE,RECTSIZE),pen,brush);
         item->setFlag(QGraphicsItem::ItemIsSelectable);
 
         // Select the current brushStyle
-        if (initialBrushstyle == (Qt::BrushStyle) i)
+        if (initialBrushstyle == Qt::BrushStyle(i))
             item->setSelected(true);
 
        // item->setFlag(QGraphicsItem::ItemIsFocusable);

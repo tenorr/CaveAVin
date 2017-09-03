@@ -59,7 +59,7 @@ Qt::BrushStyle ContainerScene::brushStyle()
     query.exec();
     query.next();
 
-    return (Qt::BrushStyle) query.value(0).toInt();
+    return Qt::BrushStyle(query.value(0).toInt());
 }
 
 void ContainerScene::createContextMenu()
@@ -105,6 +105,12 @@ void ContainerScene::deleteZone(int zoneId)
 
 void ContainerScene::createBottle()
 {
+    // Slot for passing the context position to CreateContainerBottle
+    createContainerBottle(contextPosition());
+}
+
+ContainerBottle * ContainerScene::createContainerBottle(QPointF position, int zoneId)
+{
     // Retrieve SQL record
     QSqlRecord rec = bottleModel()->record();
     int newId = bottleModel()->newId();
@@ -112,30 +118,34 @@ void ContainerScene::createBottle()
     rec.setValue("PurchaseDate",QDate::currentDate());
     rec.setValue("Room", roomId());
     rec.setValue("Container", id());
-    rec.setValue("ContainerX",contextPosition().x());
-    rec.setValue("ContainerY",contextPosition().y());
+    rec.setValue("ContainerX", position.x());
+    rec.setValue("ContainerY", position.y());
     rec.setValue("RoomR",40);
     rec.setValue("ContainerR",40);
 
-    ContainerBottle *bottle = new ContainerBottle(rec, this);
+    ContainerBottle * bottle = Q_NULLPTR;
+    ContainerBottle *b = new ContainerBottle(rec, this);
 
     // Create a new SQL record if dialog accepted and add bottle
-    if (bottle->changeBottleData(rec,-1)) {
-        addBottle(rec);
-        bottleModel()->select();
+    if (b->changeBottleData(rec,-1)) {
+        bottle = addBottle(rec);
+        if (bottle) {
+            bottleModel()->submitAll();
+            bottleModel()->select();
 
-        // Create a Bottle in the Room thanks to repositonBottle Procedure of BottleTableModel class (signal - slot)
-        bottleModel()->repositionBottle(newId);
+            // Add and position the new Bottle in the Room
+            requestBottlePositioning(newId,position);
+        }
     }
-    delete bottle;
+    delete b;
+    return bottle;
 }
 
-void ContainerScene::requestBottleRepositioning(int bottleId, QPointF move)
+void ContainerScene::requestBottlePositioning(int bottleId, QPointF containerPos)
 {
-    // Calculate new Position and Reposition
-    QPointF newPosition = QPointF(move.x()/ratio().x(), move.y()/ratio().y());
-    qDebug() << room();
-    room()->moveBottle(bottleId,newPosition);
+    // Convert position thanks to ratios
+    QPointF positionPointF = QPointF(containerPos.x()/ratio().x(), containerPos.y()/ratio().y());
+    room()->positionBottle(bottleId, positionPointF);
 }
 
 QPointF ContainerScene::ratio() const
@@ -168,10 +178,8 @@ void ContainerScene::setRoomId(int roomId)
     m_roomId = roomId;
 }
 
-
 void ContainerScene::setTableRatio()
 {
-
     // Prepare Query to retrieve width and height
     QSqlQuery query;
     query.prepare("SELECT Width, Height, QRect FROM Container WHERE Id = :id");
@@ -209,20 +217,19 @@ void ContainerScene::addZone(QSqlRecord rec)
         connect(zone,&Zone::brushStyleChanged,zoneModel(),&ZoneTableModel::changeBrushStyle);
         connect(zone,&Zone::rectangleDataChanged,zoneModel(),&ZoneTableModel::changeRectangleData);
         connect(zone,&Zone::itemToBeDeleted,this,&ContainerScene::deleteZone);
-        connect(zone,&Zone::bottlePositionChanged,this,&ContainerScene::requestBottleRepositioning);
     }
 }
 
-void ContainerScene::addBottle(QSqlRecord rec)
+ContainerBottle * ContainerScene::addBottle(QSqlRecord rec)
 {
     // Check if record is about the container
     if (rec.value("Container").toInt()==id()) {
     // If position at (0,0) find first available position with no Graphics item
-        QPoint bottlePos = QPoint(rec.value("ContainerX").toInt(), rec.value("ContainerY").toInt());
+        QPointF bottlePos = QPointF(rec.value("ContainerX").toDouble(), rec.value("ContainerY").toDouble());
         if (bottlePos.isNull()) {
-            bottlePos=bottlePos+QPoint(40,15);
+            bottlePos=bottlePos+QPointF(40,15);
             while (items(bottlePos).size() >1) {
-                bottlePos = bottlePos+QPoint(20,0);
+                bottlePos = bottlePos+QPointF(20,0);
             }
             rec.setValue("ContainerX",bottlePos.x());
             rec.setValue("ContainerY",15);
@@ -237,7 +244,8 @@ void ContainerScene::addBottle(QSqlRecord rec)
         connect(bottle,&ContainerBottle::rectangleDataChanged,bottleModel(),&BottleTableModel::changeContainerRectangleData);
         connect(bottle,&ContainerBottle::bottleToBeDeleted,this,&ContainerScene::bottleToBeDeleted);
         connect(bottle,&ContainerBottle::bottleToBeDeleted,this,&ContainerScene::deleteBottle);
-
+        return bottle;
     }
+    return Q_NULLPTR;
 }
 

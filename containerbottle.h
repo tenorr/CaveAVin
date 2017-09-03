@@ -3,6 +3,7 @@
 
 #include "abstractbottle.h"
 #include "containerscene.h"
+#include "zone.h"
 
 class ContainerScene;
 
@@ -13,12 +14,17 @@ public:
     ContainerBottle(QSqlRecord rec, ContainerScene *containerscene,QGraphicsItem *parent = Q_NULLPTR);
 
     int type() const;
+    void changeZone(Zone *newZone);
 
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-    void changeZone(int newZoneId);
 
+public slots:
+   virtual void changeRectangleData();
+
+private:
+    bool fPositioning;
 };
 
 #endif // CONTAINERBOTTLE_H

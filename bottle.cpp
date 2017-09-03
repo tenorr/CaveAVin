@@ -8,7 +8,6 @@ Bottle::Bottle(QSqlRecord rec, Room *room, QGraphicsItem *parent)
 // Set Bottle Model
 setBottleModel(room->bottleModel());
 
-
 // Assign the Bottle to the Container parent
 
 int containerId = sublocationId();
@@ -31,7 +30,7 @@ int containerId = sublocationId();
    }
 
 // Position the bottle on screen
-   QPoint pos = QPoint(rec.value("RoomX").toInt(),rec.value("RoomY").toInt());
+   QPointF pos = QPointF(rec.value("RoomX").toDouble(),rec.value("RoomY").toDouble());
    setPos(pos);
 }
 

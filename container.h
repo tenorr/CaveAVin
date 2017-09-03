@@ -1,7 +1,6 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-
 #include "room.h"
 #include "containerwindow.h"
 #include "rectgraphicsobject.h"

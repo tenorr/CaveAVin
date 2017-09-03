@@ -4,7 +4,7 @@
 #include "abstractwinetablemodel.h"
 
 #include <QColor>
-#include <QRect>
+#include <QRectF>
 
 class AbstractRectModel : public AbstractWineTableModel
 {
@@ -21,7 +21,7 @@ public:
 public slots:
      void changeColor(QColor color, int id);
      void changeBrushStyle(Qt::BrushStyle bs, int id);
-     virtual void changeRectangleData(QRect data, int id);
+     virtual void changeRectangleData(QRectF data, int id);
 
 private:
     QString m_parentName;

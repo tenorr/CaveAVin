@@ -12,11 +12,11 @@ public:
 
     int type() const;
 
-signals:
-    void bottlePositionChanged(int bottleId, QPointF vector);
+private slots:
+    void createBottle();
 
-protected:
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+public slots:
+   virtual void changeRectangleData();
 
 };
 

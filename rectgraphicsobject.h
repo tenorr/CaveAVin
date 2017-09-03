@@ -9,7 +9,6 @@
 #include <QMessageBox>
 
 
-
 class RectGraphicsObject : public GraphicsObject
 {
     Q_OBJECT
@@ -17,6 +16,12 @@ public:
     RectGraphicsObject(QSqlRecord rec,QGraphicsItem *parent = Q_NULLPTR);
 
 protected:
+    QMenu *contextMenu() const;
+    void setContextMenu(QMenu *contextMenu);
+
+    QPointF contextPosition() const;
+    void setContextPosition(const QPointF &contextPosition);
+
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -34,6 +39,10 @@ signals:
     void colorChanged(QColor color,int id);
     void brushStyleChanged(Qt::BrushStyle bs, int id);
     void itemToBeDeleted(int id);
+
+protected:
+    QMenu * m_contextMenu;
+    QPointF m_contextPosition;
 };
 
 #endif // RECTGRAPHICSOBJECT_H
