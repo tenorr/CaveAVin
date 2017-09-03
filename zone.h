@@ -11,6 +11,13 @@ public:
     Zone(QSqlRecord rec, QGraphicsItem *parent = Q_NULLPTR);
 
     int type() const;
+
+private slots:
+    void createBottle();
+
+public slots:
+   virtual void changeRectangleData();
+
 };
 
 #endif // ZONE_H

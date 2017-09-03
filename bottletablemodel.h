@@ -2,7 +2,7 @@
 #define BOTTLETABLEMODEL_H
 
 #include "abstractwinetablemodel.h"
-#include <QRect>
+#include <QRectF>
 #include <QSqlQuery>
 
 class BottleTableModel : public AbstractWineTableModel
@@ -11,15 +11,14 @@ class BottleTableModel : public AbstractWineTableModel
 public:
     BottleTableModel(QObject *parent = Q_NULLPTR, QSqlDatabase db = QSqlDatabase());
 
+//    void repositionBottle(int id);TODELETE
+
 public slots:
-    void changeRectangleData(QRect data, int id);
-    void changeContainerRectangleData(QRect data, int id);
+    void changeRectangleData(QRectF data, int id);
+    void changeContainerRectangleData(QRectF data, int id);
     void changeContainer(int bottleId, int newContainerId);
     void changeZone(int bottleId, int newZoneId);
     void deleteBottle(int bottleId);
-
-signals:
-    void bottleReposioned(int id, QPoint pos);
 
 };
 

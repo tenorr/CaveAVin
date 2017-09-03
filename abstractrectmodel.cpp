@@ -64,13 +64,13 @@ void AbstractRectModel::changeBrushStyle(Qt::BrushStyle bs, int id)
 
     if (row !=-1) {
     QSqlRecord rec = record(row);
-    rec.setValue("BrushSTyle",(int) bs);
+    rec.setValue("BrushStyle",int(bs));
     setRecord(row,rec);
     submitAll();
     }
 }
 
-void AbstractRectModel::changeRectangleData(QRect data, int id)
+void AbstractRectModel::changeRectangleData(QRectF data, int id)
 {
     // Change Rectangle Data
     int row = rowPosition(id);

@@ -16,9 +16,17 @@ Room::Room(ContainerTableModel *containerModel, BottleTableModel *bottleModel, Z
     setName(new GraphicsText);
 
  // Add rectangle and name into scene
+
+    // Retrieve parent geometry and set scene rectangle
+    QSize sceneRectSize = static_cast<QWidget *>(parent)->size();
+    setSceneRect(QRectF(QPointF(0,0),sceneRectSize));
+
+    // Draw a rectangle to border it
+    QSizeF rectangleSize = QSizeF(sceneRectSize) - QSizeF(20,25);
+
     QPen pen;
     pen.setWidth(10);
-    addRect(10,10,1960,1200,pen);
+    addRect(QRectF(QPointF(10,10),rectangleSize),pen);
 
     // Create Context Menu
     createContextMenu();
@@ -32,8 +40,6 @@ Room::Room(ContainerTableModel *containerModel, BottleTableModel *bottleModel, Z
     for(int i=0;i<bottleModel->rowCount();i++) {
     addBottle(bottleModel->record(i));
     }
-    // Connect bottle Table Model for repositioning
-    connect(bottleModel,&BottleTableModel::bottleReposioned,this,&Room::repositionBottle);
 }
 
 Room::~Room()
@@ -81,21 +87,6 @@ void Room::createBottle()
     delete bottle;
 }
 
-void Room::repositionBottle(int bottleId, QPoint pos)
-{
-    // Find the bottle in the scene
-    QList<QGraphicsItem *> itemList = items();
-    foreach (QGraphicsItem * item, itemList) {
-        if (item->type()== QGraphicsItem::UserType +1) {
-            Bottle *bottle = static_cast<Bottle *>(item);
-            if (bottle->id() == bottleId) {
-                bottle->setPos(pos);
-                break;
-            }
-        }
-    }
-}
-
 void Room::addContainer(QSqlRecord rec)
 {
     // Check if rec is about to the room
@@ -123,8 +114,9 @@ void Room::addBottle(QSqlRecord rec)
             addItem(bottle);
 
     // Connect signals
+       connect(bottle,&Bottle::bottleToBeDeleted,this,&Room::deleteBottle);
         connect(bottle,&Bottle::rectangleDataChanged,bottleModel(),&BottleTableModel::changeRectangleData);
-        connect(bottle,&Bottle::bottleToBeDeleted,this,&Room::deleteBottle);
+
     }
 }
 
@@ -146,5 +138,44 @@ void Room::setContainerModel(ContainerTableModel *containerModel)
     m_containerModel = containerModel;
 }
 
+Bottle *Room::findBottle(int bottleId)
+{
+    // Find the bottle in the scene
+    QList<QGraphicsItem *> itemList = items();
+     foreach (QGraphicsItem * item, itemList) {
+        if (item->type()== QGraphicsItem::UserType +1) {
+            Bottle *bottle = static_cast<Bottle *>(item);
+            if (bottle->id() == bottleId) {
+                return bottle;
+                break;
+            }
+        }
+    }
+     return Q_NULLPTR;
+}
 
+Bottle * Room::createBottleFromTableData(int bottleId)
+{
+    // Retrieve the record of the bottle
+    int row = bottleModel()->rowPosition(bottleId);
+
+    if (row !=-1) {
+        // Add a new bottle if exists
+        QSqlRecord rec = bottleModel()->record(row);
+        addBottle(rec);
+    }
+    return findBottle(bottleId); // return true if add Bottle is achieved
+}
+
+void Room::positionBottle(int bottleId, QPointF position)
+{
+    Bottle * bottle = findBottle(bottleId);
+    // Create Bottle if not found according to the tableModel data
+    if (!bottle)
+        bottle = createBottleFromTableData(bottleId);
+
+    // Position the bottle in the container
+    if (bottle)
+        bottle->setPos(position);
+}
 

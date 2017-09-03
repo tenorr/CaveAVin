@@ -18,8 +18,8 @@ public:
     int id() const;
     void setId(int id);
 
-    QRect rect() const;
-    void setRect(const QRect &rect);
+    QRectF rect() const;
+    void setRect(const QRectF &rect);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -31,14 +31,14 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void rectangleDataChanged(QRect data, int id);
+    void rectangleDataChanged(QRectF data, int id);
 
 public slots:
    virtual void changeRectangleData();
 
 protected:
     int m_id;
-    QRect m_rect;
+    QRectF m_rect;
     QColor m_color;
     Qt::BrushStyle m_brushStyle;
 };

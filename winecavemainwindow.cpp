@@ -1,11 +1,15 @@
 #include "winecavemainwindow.h"
 
+
 WineCaveMainWindow::WineCaveMainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     // Set Window Title and Geometry
     setWindowTitle(tr("Wine Cave ") + VERSION);
-    setGeometry(100,100,2000,1200);
+
+    // Retieve screen geometry and adapt window size (85% of screen)
+    QSize screenDimensions = QApplication::primaryScreen()->geometry().size()*=0.85;
+    setGeometry(250,80,screenDimensions.width(),screenDimensions.height());
 
     // Add Menus and MenuBar
     setMenus(new QMenu*);
@@ -22,7 +26,7 @@ WineCaveMainWindow::WineCaveMainWindow(QWidget *parent) :
     setGraphicsView(new QGraphicsView);
 
     // Create Room (Default Id =1)
-    setRoom(new Room(containerTableModel(),bottleTableModel(),zoneTableModel()));
+    setRoom(new Room(containerTableModel(),bottleTableModel(),zoneTableModel(),1,this));
 }
 
 WineCaveMainWindow::~WineCaveMainWindow()
@@ -67,12 +71,11 @@ QGraphicsView *WineCaveMainWindow::graphicsView() const
 
 void WineCaveMainWindow::setGraphicsView(QGraphicsView *graphicsView)
 {
-
     // Set View Characteristics
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    graphicsView->setFixedSize(1980,1220);
 
+    graphicsView->setFixedSize(geometry().size());
     setCentralWidget(graphicsView);
 
     m_graphicsView = graphicsView;
@@ -137,7 +140,7 @@ QSqlDatabase WineCaveMainWindow::db() const
 void WineCaveMainWindow::setDb()
 {
     QSqlDatabase db=QSqlDatabase::addDatabase("QODBC");
-    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:/Users/olivi_000/OneDrive/Documents/Qt/WineCave/CaveAVin/WineDatabase.mdb");
+    db.setDatabaseName("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=C:/Users/olivi/OneDrive/Documents/Qt/WineCave/CaveAVin/WineDatabase.mdb");
     db.open();
     m_db = db;
 }

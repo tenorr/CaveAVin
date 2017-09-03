@@ -18,16 +18,19 @@ public:
 
     ContainerTableModel *containerModel() const;
     void setContainerModel(ContainerTableModel *containerModel);
+    void positionBottle(int bottleId,QPointF position);
+    void moveBottle(int bottleId, QPointF move);
 
 public slots:
     void createContainer();
     void deleteContainer(int id);
     void createBottle();
-    void repositionBottle(int bottleId, QPoint pos);
 
 private:
     void addContainer(QSqlRecord rec);
     void addBottle(QSqlRecord rec);
+    Bottle * findBottle(int bottleId);
+    Bottle *createBottleFromTableData(int bottleId);
     void createContextMenu();
 
 private:

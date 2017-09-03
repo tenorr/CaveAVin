@@ -15,7 +15,7 @@ AbstractBottle::AbstractBottle(QString locationName, QString subLocationName, QS
     setSublocationId(rec.value(subLocationName).toInt());
 
     // Set Radius according to location
-    setRect(QRect(0,0,rec.value(locationName+"R").toInt(),rec.value(locationName+"R").toInt()));
+    setRect(QRectF(0,0,rec.value(locationName+"R").toDouble(),rec.value(locationName+"R").toDouble()));
 
     // Set Wine Type, Color and brushStyle
     int wineType = findWineTypeOf(rec.value("Wine").toInt());
@@ -75,7 +75,8 @@ void AbstractBottle::setWineType(int wineType)
         if (query.exec()) {
             query.next();
             color = QColor(query.value("Red").toInt(),query.value("Green").toInt(),query.value("Blue").toInt() );
-            brushStyle = (Qt::BrushStyle) query.value("BrushStyle").toInt();}
+            brushStyle = Qt::BrushStyle(query.value("BrushStyle").toInt());
+        }
     }
     setColor(color);
     setBrushStyle(brushStyle);
@@ -117,7 +118,7 @@ QRectF AbstractBottle::boundingRect() const
 void AbstractBottle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->setBrush(QBrush(color(),brushStyle()));
-    painter->drawEllipse(QRect(0,0,rect().width(),rect().height()));
+    painter->drawEllipse(QRectF(0,0,rect().width(),rect().height()));
     Q_UNUSED(option)
     Q_UNUSED(widget)
 }
@@ -131,9 +132,9 @@ void AbstractBottle::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 void AbstractBottle::changeRectangleData()
 {
     // Adjust size with average of width and height
-   QSize size=rect().size();
-   int radius = (size.height()+size.width())/2;
-   m_rect.setSize(QSize(radius,radius));
+   QSizeF size = rect().size();
+   qreal radius = (size.height()+size.width())/2;
+   m_rect.setSize(QSizeF(radius,radius));
    GraphicsObject::changeRectangleData();
 }
 

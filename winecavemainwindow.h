@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QApplication>
+#include <QScreen>
 #include <QMenu>
 #include <QMenuBar>
 #include <QGraphicsView>

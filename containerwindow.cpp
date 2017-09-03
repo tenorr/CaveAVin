@@ -5,13 +5,14 @@ ContainerWindow::ContainerWindow(int containerId, Room *room, QWidget *parent)
 : QMainWindow(parent)
 {
     setContainerId(containerId);
+    setRoom(room);
+
     // Retrieve geometry from DataBase
     QRect geometryRect = getGeometryFromDatabase(containerId);
     setGeometry(geometryRect);
 
     setWindowModality(Qt::WindowModal);
     setWindowTitle(tr("Container #")+QString::number(containerId));
-    setRoom(room);
 
     // Create Menu
     setMenus(new QMenu *);
@@ -20,7 +21,7 @@ ContainerWindow::ContainerWindow(int containerId, Room *room, QWidget *parent)
     setGraphicsView(new QGraphicsView);
 
     // Create Container Scene
-    setContainerScene(new ContainerScene(containerId,*room));
+    setContainerScene(new ContainerScene(containerId,room));
 }
 
 QGraphicsView *ContainerWindow::graphicsView() const
@@ -119,7 +120,7 @@ QRect ContainerWindow::getGeometryFromDatabase(int containerId)
        int w = query.value("Width").toInt();
        int h = query.value("Height").toInt();
        // Find minimum ratio
-       qreal ratio = qMin(1980.0/w , 1220.0/h);
+       qreal ratio = qMin(room()->width()/w , room()->height()/h);
         // Store QRect Value
        if (rectStr.isEmpty()) {
            rectStr = encodeFromQRect(QRect(50,50,int(w*ratio), int(h*ratio)));

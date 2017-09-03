@@ -1,17 +1,19 @@
 #include "containerscene.h"
 #include <QDebug>
 
-ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
+ContainerScene::ContainerScene(int containerId, Room *room, QObject *parent)
     : AbstractScene(containerId, parent)
 {
     // Set SQL Tables
-    setDb(room.db());
-    setBottleModel(room.bottleModel());
-    setZoneModel(room.zoneModel());
+    setDb(room->db());
+    setBottleModel(room->bottleModel());
+    setZoneModel(room->zoneModel());
     setTableName("Container");
+    setRoomId(room->id());
+    setRoom(room);
 
     // Store container dimensions
-         setRatio();
+       setTableRatio();
 
     // Add color and brush style
        QPen pen;
@@ -25,8 +27,6 @@ ContainerScene::ContainerScene(int containerId, Room &room, QObject *parent)
 
    // Create Context Menu
        createContextMenu();
-
-
 
    // Populate Container with zones
           for(int i=0;i<zoneModel()->rowCount();i++) {
@@ -59,14 +59,14 @@ Qt::BrushStyle ContainerScene::brushStyle()
     query.exec();
     query.next();
 
-    return (Qt::BrushStyle) query.value(0).toInt();
+    return Qt::BrushStyle(query.value(0).toInt());
 }
 
 void ContainerScene::createContextMenu()
 {
     QMenu * menu = new QMenu;
     menu->addAction(tr("Create Zone"), this,SLOT(createZone()));
-    menu->addAction(tr("Create Bottle"));
+    menu->addAction(tr("Create Bottle"), this,SLOT(createBottle()));
     setContextMenu(menu);
 }
 
@@ -105,51 +105,81 @@ void ContainerScene::deleteZone(int zoneId)
 
 void ContainerScene::createBottle()
 {
+    // Slot for passing the context position to CreateContainerBottle
+    createContainerBottle(contextPosition());
+}
+
+ContainerBottle * ContainerScene::createContainerBottle(QPointF position)
+{
     // Retrieve SQL record
     QSqlRecord rec = bottleModel()->record();
     int newId = bottleModel()->newId();
     rec.setValue("Id",newId);
-    BottleDialog* dialog = new BottleDialog(db(),rec);
-    if (dialog->exec()==QDialog::Accepted) {
-        rec = bottleModel()->record();
-        rec.setValue("Id",newId);
-        rec.setValue("Wine",dialog->wineId());
-        int index = dialog->index("Millesime");
-        int millesime = dialog->combo().at(index)->currentText().toInt();
-        rec.setValue("Millesime",millesime);
-        rec.setValue("Container", id());
-        rec.setValue("ContainerX",contextPosition().x());
-        rec.setValue("ContainerY",contextPosition().y());
-        rec.setValue("RoomR",40);
-        rec.setValue("ContainerR",40);
+    rec.setValue("PurchaseDate",QDate::currentDate());
+    rec.setValue("Room", roomId());
+    rec.setValue("Container", id());
+    rec.setValue("ContainerX", position.x());
+    rec.setValue("ContainerY", position.y());
+    rec.setValue("RoomR",40);
+    rec.setValue("ContainerR",40);
 
-     // Retrieve information about container
-        QSqlQuery query;
-        query.prepare("SELECT Room FROM Container WHERE Id = :id");
-        query.bindValue(":id",id());
-        query.exec();
-        query.next();
-        rec.setValue("Room",query.value(0));
-        /*
-        QGraphicsItem *item = itemAt(contextPosition(),QTransform());
-        if (item !=0) {
-            if (item->type()=QGraphicsItem::UserType+2) {
-                    int zoneId = static_cast<Zone *>(item)->id();
-                    rec.setValue("Zone",zoneId);
-            }
+    ContainerBottle * bottle = Q_NULLPTR;
+    ContainerBottle *b = new ContainerBottle(rec, this);
+
+    // Create a new SQL record if dialog accepted and add bottle
+    if (b->changeBottleData(rec,-1)) {
+        bottle = addBottle(rec);
+        if (bottle) {
+            bottleModel()->submitAll();
+            bottleModel()->select();
+
+            // Add and position the new Bottle in the Room
+            requestBottlePositioning(newId,position);
         }
-        */
-        bottleModel()->insertRecord(-1,rec);
-        bottleModel()->submitAll();
     }
-    delete dialog;
-    addBottle(rec);
+    delete b;
+    return bottle;
 }
 
-
-void ContainerScene::setRatio()
+void ContainerScene::requestBottlePositioning(int bottleId, QPointF containerPos)
 {
+    // Convert position thanks to ratios
+    QPointF positionPointF = QPointF(containerPos.x()/ratio().x(), containerPos.y()/ratio().y());
+    room()->positionBottle(bottleId, positionPointF);
+}
 
+QPointF ContainerScene::ratio() const
+{
+    return m_ratio;
+}
+
+void ContainerScene::setRatio(const QPointF &ratio)
+{
+    m_ratio = ratio;
+}
+
+Room *ContainerScene::room() const
+{
+    return m_room;
+}
+
+void ContainerScene::setRoom(Room *room)
+{
+    m_room = room;
+}
+
+int ContainerScene::roomId() const
+{
+    return m_roomId;
+}
+
+void ContainerScene::setRoomId(int roomId)
+{
+    m_roomId = roomId;
+}
+
+void ContainerScene::setTableRatio()
+{
     // Prepare Query to retrieve width and height
     QSqlQuery query;
     query.prepare("SELECT Width, Height, QRect FROM Container WHERE Id = :id");
@@ -162,6 +192,9 @@ void ContainerScene::setRatio()
 
     qreal xRatio = width()/query.value(0).toInt();
     qreal yRatio = height()/query.value(1).toInt();
+
+    // Set Ratio in object
+    setRatio(QPointF(xRatio,yRatio));
 
     // Store ratios in SQL Table
     query.prepare(QString("UPDATE Container SET XRatio = :XRatio , YRatio = :YRatio WHERE Id = :id"));
@@ -187,16 +220,16 @@ void ContainerScene::addZone(QSqlRecord rec)
     }
 }
 
-void ContainerScene::addBottle(QSqlRecord rec)
+ContainerBottle * ContainerScene::addBottle(QSqlRecord rec)
 {
     // Check if record is about the container
     if (rec.value("Container").toInt()==id()) {
     // If position at (0,0) find first available position with no Graphics item
-        QPoint bottlePos = QPoint(rec.value("ContainerX").toInt(), rec.value("ContainerY").toInt());
+        QPointF bottlePos = QPointF(rec.value("ContainerX").toDouble(), rec.value("ContainerY").toDouble());
         if (bottlePos.isNull()) {
-            bottlePos=bottlePos+QPoint(40,15);
+            bottlePos=bottlePos+QPointF(40,15);
             while (items(bottlePos).size() >1) {
-                bottlePos = bottlePos+QPoint(20,0);
+                bottlePos = bottlePos+QPointF(20,0);
             }
             rec.setValue("ContainerX",bottlePos.x());
             rec.setValue("ContainerY",15);
@@ -211,7 +244,8 @@ void ContainerScene::addBottle(QSqlRecord rec)
         connect(bottle,&ContainerBottle::rectangleDataChanged,bottleModel(),&BottleTableModel::changeContainerRectangleData);
         connect(bottle,&ContainerBottle::bottleToBeDeleted,this,&ContainerScene::bottleToBeDeleted);
         connect(bottle,&ContainerBottle::bottleToBeDeleted,this,&ContainerScene::deleteBottle);
-
+        return bottle;
     }
+    return Q_NULLPTR;
 }
 

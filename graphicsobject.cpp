@@ -23,12 +23,12 @@ void GraphicsObject::setId(int id)
     m_id = id;
 }
 
-QRect GraphicsObject::rect() const
+QRectF GraphicsObject::rect() const
 {
     return m_rect;
 }
 
-void GraphicsObject::setRect(const QRect &rect)
+void GraphicsObject::setRect(const QRectF &rect)
 {
     m_rect = rect;
 }
@@ -56,7 +56,7 @@ void GraphicsObject::setBrushStyle(const Qt::BrushStyle &brushStyle)
 void GraphicsObject::changeRectangleSize(QPointF dPos)
 {
    // Calculate new size and limit to 20x20
-     QSize newSize = rect().size()+QSize(dPos.x(), dPos.y());
+     QSizeF newSize = rect().size()+QSizeF(dPos.x(), dPos.y());
         if (newSize.height()<20)
             newSize.setHeight(20);
         if (newSize.width()<20)
@@ -86,7 +86,7 @@ void GraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsObject::changeRectangleData()
 {
-    QRect data;
+    QRectF data;
     data.setX((x()<10)? 10: x());
     data.setY((y()<10)? 10: y());
     data.setSize(rect().size());

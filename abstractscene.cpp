@@ -5,7 +5,7 @@ AbstractScene::AbstractScene(int id, QObject *parent)
     :QGraphicsScene(parent)
 {
     setId(id);
-    setSceneRect(0,0,1980,1220);
+
 }
 
 AbstractScene::~AbstractScene()
@@ -77,6 +77,7 @@ void AbstractScene::deleteBottle(int bottleId)
         }
 }
 
+
 void AbstractScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
 {
     if (contextMenuEvent) {
@@ -128,6 +129,7 @@ void AbstractScene::wineTypeEvent(WineTypeEvent *event)
         }
      }
 }
+
 
 ZoneTableModel *AbstractScene::zoneModel() const
 {

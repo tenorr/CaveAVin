@@ -3,14 +3,18 @@
 RectGraphicsObject::RectGraphicsObject(QSqlRecord rec, QGraphicsItem *parent)
     : GraphicsObject(parent)
 {
+    // Set a contextMenu
+
+    setContextMenu(new QMenu);
+
     // Set Z coordinate to be on the background
     setZValue(0);
 
     // Set Data from record
     setId(rec.value("Id").toInt());
-    setRect(QRect(rec.value("XPos").toInt(),rec.value("YPos").toInt(),rec.value("Width").toInt(),rec.value("Height").toInt()));
+    setRect(QRectF(rec.value("XPos").toDouble(),rec.value("YPos").toDouble(),rec.value("Width").toDouble(),rec.value("Height").toDouble()));
     setColor(QColor(rec.value("Red").toInt(),rec.value("Green").toInt(),rec.value("Blue").toInt()));
-    setBrushStyle((Qt::BrushStyle) rec.value("BrushStyle").toInt());
+    setBrushStyle(Qt::BrushStyle(rec.value("BrushStyle").toInt()));
 
     // Set initial position
     setPos(rect().x(),rect().y());
@@ -28,18 +32,16 @@ QRectF RectGraphicsObject::boundingRect() const
 void RectGraphicsObject::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->setBrush(QBrush(color(),brushStyle()));
-    painter->drawRect(QRect(0,0,rect().width(),rect().height()));
+    painter->drawRect(QRectF(0,0,rect().width(),rect().height()));
     Q_UNUSED(option)
     Q_UNUSED(widget)
 }
 
 void RectGraphicsObject::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    // Create Menu and execute selected item
-    QMenu menu;
-    menu.addAction(tr("Change Color"),this,SLOT(changeColor()));
-    menu.addAction(tr("Change Style"),this,SLOT(changeBrushStyle()));
-    menu.exec(event->screenPos());
+    // Store Position and execute the selected item of the context Menu
+    setContextPosition(event->scenePos());
+    contextMenu()->exec(event->screenPos());
 }
 
 void RectGraphicsObject::keyPressEvent(QKeyEvent *event)
@@ -100,4 +102,27 @@ void RectGraphicsObject::changeBrushStyle()
         emit brushStyleChanged(bs,id());
         }
     delete dialog;
+}
+
+QPointF RectGraphicsObject::contextPosition() const
+{
+    return m_contextPosition;
+}
+
+void RectGraphicsObject::setContextPosition(const QPointF &contextPosition)
+{
+    m_contextPosition = contextPosition;
+}
+
+QMenu *RectGraphicsObject::contextMenu() const
+{
+    return m_contextMenu;
+}
+
+void RectGraphicsObject::setContextMenu(QMenu *contextMenu)
+{
+    // Add global actions
+    contextMenu->addAction(tr("Change Color"),this,SLOT(changeColor()));
+    contextMenu->addAction(tr("Change Style"),this,SLOT(changeBrushStyle()));
+    m_contextMenu = contextMenu;
 }

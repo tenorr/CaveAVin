@@ -2,7 +2,7 @@
 #include <QDebug>
 
 WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::WindowFlags f)
-    :AbstractModelFormDialog(parent,f)
+    :PhotoFormDialog(parent,f)
 {
     setWindowTitle(tr("Manage Wine"));
     setForm(":/form/wineForm.ui");
@@ -26,6 +26,7 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
    lineEdit().at(indexOf("AppellationId"))->hide();
    lineEdit().at(indexOf("WineryId"))->hide();
    lineEdit().at(indexOf("GrapeVariety"))->hide();
+   lineEdit().at(indexOf("LabelImage"))->hide();
 }
 
 WineModel *WineDialog::wineModel() const
@@ -127,7 +128,9 @@ int WineDialog::wineTypeId()
 }
 
 void WineDialog::setInitialData(int id)
-{
+{    
+    setPhoto();
+
     // Execute standard settings
     AbstractModelFormDialog::setInitialData(id);
 
