@@ -16,6 +16,7 @@ int Zone::type() const
 void Zone::createBottle()
 {
     emit bottleCreationRequested(contextPosition(), this);
+   
 }
 
 void Zone::changeRectangleData()

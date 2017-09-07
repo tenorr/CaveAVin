@@ -18,4 +18,3 @@ void ZoneTableModel::deleteStorageZones(int storageId)
     }
     submitAll();
 }
-
