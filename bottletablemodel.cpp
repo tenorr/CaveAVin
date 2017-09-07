@@ -8,6 +8,29 @@ BottleTableModel::BottleTableModel(QObject *parent, QSqlDatabase db)
 
 }
 
+QPointF BottleTableModel::storagePosition(int id)
+{
+    QPointF position = QPointF();
+    int row = rowPosition(id);
+     if (row !=-1) {
+         QSqlRecord rec = record(row);
+         position = QPointF(rec.value("StorageX").toDouble(),rec.value("StorageY").toDouble());
+     }
+     return position;
+}
+
+void BottleTableModel::setStoragePosition(int id, QPointF position)
+{
+     int row = rowPosition(id);
+     if (row !=-1) {
+         QSqlRecord rec = record(row);
+         rec.setValue("StorageX",position.x());
+         rec.setValue("StorageY",position.y());
+         setRecord(row,rec);
+         submitAll();
+     }
+}
+
 
 void BottleTableModel::changeRectangleData(QRectF data, int id)
 {
@@ -16,40 +39,40 @@ void BottleTableModel::changeRectangleData(QRectF data, int id)
 
     if (row !=-1) {
     QSqlRecord rec = record(row);
-    rec.setValue("RoomX",data.x());
-    rec.setValue("RoomY",data.y());
-    rec.setValue("RoomR",data.width());
+    rec.setValue("CellarX",data.x());
+    rec.setValue("CellarY",data.y());
+    rec.setValue("CellarR",data.width());
     setRecord(row,rec);
     submitAll();
     }
 }
 
-void BottleTableModel::changeContainerRectangleData(QRectF data, int id)
+void BottleTableModel::changeStorageRectangleData(QRectF data, int id)
 {
     // Change Rectangle Data
     int row = rowPosition(id);
 
     if (row !=-1) {
         QSqlRecord rec = record(row);
-        rec.setValue("ContainerX",data.x());
-        rec.setValue("ContainerY",data.y());
-        rec.setValue("ContainerR",data.width());
+        rec.setValue("StorageX",data.x());
+        rec.setValue("StorageY",data.y());
+        rec.setValue("StorageR",data.width());
         setRecord(row,rec);
         submitAll();
     }
 
 }
 
-void BottleTableModel::changeContainer(int bottleId, int newContainerId)
+void BottleTableModel::changeStorage(int bottleId, int newStorageId)
 {
     int row = rowPosition(bottleId);
 
     if (row !=-1) {
     QSqlRecord rec = record(row);
-    rec.setValue("Container",newContainerId);
+    rec.setValue("Storage",newStorageId);
     rec.setValue("Zone",0);
-    rec.setValue("ContainerX",0);
-    rec.setValue("ContainerY",0);
+    rec.setValue("StorageX",0);
+    rec.setValue("StorageY",0);
     setRecord(row,rec);
     submitAll();
     }
@@ -67,12 +90,13 @@ void BottleTableModel::changeZone(int bottleId, int newZoneId)
     }
 }
 
-void BottleTableModel::deleteBottle(int bottleId)
+bool BottleTableModel::deleteBottle(int bottleId)
 {
     int row = rowPosition(bottleId);
     if (row !=-1) {
-    removeRow(row);
-    submitAll();
+        removeRow(row);
+        submitAll();
     }
+    return (row !=-1);
 }
 

@@ -4,17 +4,18 @@
 ZoneTableModel::ZoneTableModel(QObject *parent, QSqlDatabase db)
     : AbstractRectModel("Zone",parent,db)
 {
-    setParentName("Container");
+    setParentName("Storage");
 }
 
-void ZoneTableModel::deleteContainerZones(int containerId)
+void ZoneTableModel::deleteStorageZones(int storageId)
 {
     QSqlRecord rec;
     for (int i=0; i<rowCount();i++) {
      rec = record(i);
-     // Delete record if the zone is assign to the container
-     if (rec.value("Container").toInt()==containerId)
+     // Delete record if the zone is assign to the Storage
+     if (rec.value("Storage").toInt()==storageId)
          removeRow(i);
     }
     submitAll();
 }
+

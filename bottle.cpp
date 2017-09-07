@@ -2,35 +2,35 @@
 #include <QDebug>
 
 
-Bottle::Bottle(QSqlRecord rec, Room *room, QGraphicsItem *parent)
-    : AbstractBottle("Room","Container",rec, parent)
+Bottle::Bottle(QSqlRecord rec, Cellar *cellar, QGraphicsItem *parent)
+    : AbstractBottle("Cellar","Storage",rec, parent)
 {
 // Set Bottle Model
-setBottleModel(room->bottleModel());
+setBottleModel(cellar->bottleModel());
 
-// Assign the Bottle to the Container parent
+// Assign the Bottle to the Storage parent
 
-int containerId = sublocationId();
+int storageId = sublocationId();
 
-   if (containerId !=0) {
-  QList<QGraphicsItem *> itemList = room->items();
-  Container * container;
-  Container * containerItem;
-  //Find the Graphics item with the correct ContainerId
+   if (storageId !=0) {
+  QList<QGraphicsItem *> itemList = cellar->items();
+  Storage * storage;
+  Storage * storageItem;
+  //Find the Graphics item with the correct StorageId
   foreach (QGraphicsItem * item, itemList) {
       if (item->type()==UserType){
-          containerItem = static_cast<Container*>(item);
-          if (containerItem->id() == containerId) {
-              container = containerItem;
+          storageItem = static_cast<Storage*>(item);
+          if (storageItem->id() == storageId) {
+              storage = storageItem;
               break;
           }
       }
     }
-   setParentItem(container);
+   setParentItem(storage);
    }
 
 // Position the bottle on screen
-   QPointF pos = QPointF(rec.value("RoomX").toDouble(),rec.value("RoomY").toDouble());
+   QPointF pos = QPointF(rec.value("CellarX").toDouble(),rec.value("CellarY").toDouble());
    setPos(pos);
 }
 
@@ -43,36 +43,36 @@ int Bottle::type() const
 void Bottle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
    if (event) {
-       int containerId = sublocationId();
+       int storageId = sublocationId();
        QList<QGraphicsItem *> cItems = collidingItems();
-       int iContainer=-1;
-           // Find the first container available
+       int iStorage=-1;
+           // Find the first storage available
            for (int i=0, n=cItems.size();i<n;i++) {
                if (cItems.at(i)->type() == UserType) {
-                   iContainer=i;
+                   iStorage=i;
                    break;
                }
            }
-        int newContainerId=0; // Set to 0 if no container at mouse position
-           if (iContainer !=-1) {
-               // Retrieve Container Container Id
-               Container * container = static_cast <Container *> (cItems.at(iContainer));
-               newContainerId= container->id();
+        int newStorageId=0; // Set to 0 if no storage at mouse position
+           if (iStorage !=-1) {
+               // Retrieve storage Storage Id
+               Storage * storage = static_cast <Storage *> (cItems.at(iStorage));
+               newStorageId= storage->id();
            }
-    if (newContainerId != containerId) {
-        // Change Container
-        changeContainer(newContainerId);
-        // Save current container position before change
-        QPointF oldContainerPos = (parentItem()==nullptr)? QPointF(): parentItem()->pos();
-        if (iContainer !=-1) {
-            Container * container = static_cast <Container *> (cItems.at(iContainer));
-            setParentItem(container);
-            // Find new position in Container position
-            setPos(pos()+oldContainerPos-parentItem()->pos());}
+    if (newStorageId != storageId) {
+        // Change storage
+        changeStorage(newStorageId);
+        // Save current storage position before change
+        QPointF oldStoragePos = (parentItem()==nullptr)? QPointF(): parentItem()->pos();
+        if (iStorage !=-1) {
+            Storage * storage = static_cast <Storage *> (cItems.at(iStorage));
+            setParentItem(storage);
+            // Find new position in Storage position
+            setPos(pos()+oldStoragePos-parentItem()->pos());}
         else {
             setParentItem(nullptr);
-            // Find new position in Room position
-            setPos(pos()+oldContainerPos);
+            // Find new position in Cellar position
+            setPos(pos()+oldStoragePos);
         }
        }
    }
@@ -85,9 +85,9 @@ void Bottle::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
    contextMenu()->exec(event->screenPos());
 }
 
-void Bottle::changeContainer(int newContainerId)
+void Bottle::changeStorage(int newStorageId)
 {
-    setSublocationId(newContainerId);
-    bottleModel()->changeContainer(id(),newContainerId);
+    setSublocationId(newStorageId);
+    bottleModel()->changeStorage(id(),newStorageId);
 }
 

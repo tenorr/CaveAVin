@@ -61,12 +61,13 @@ void GraphicsObject::changeRectangleSize(QPointF dPos)
             newSize.setHeight(20);
         if (newSize.width()<20)
             newSize.setWidth(20);
-        // Update Rectangle Size and emit signal
-        m_rect.setSize(newSize);
-        changeRectangleData();
 
-        // Prepares the item for a geometry change and update the scene
-        prepareGeometryChange();
+    // Update Rectangle Size and emit signal
+     m_rect.setSize(newSize);
+     changeRectangleData();
+
+    // Prepares the item for a geometry change and update the scene
+     prepareGeometryChange();
 }
 
 void GraphicsObject::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

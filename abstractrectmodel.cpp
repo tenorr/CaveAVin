@@ -37,9 +37,8 @@ bool AbstractRectModel::deleteRecordId(int id)
       // Delete row
         removeRows(row,1);
         submitAll();
-        return true;
     }
-    else return false;
+    return (row !=-1);
 }
 
 void AbstractRectModel::changeColor(QColor color, int id)

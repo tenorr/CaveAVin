@@ -26,11 +26,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         winecavemainwindow.cpp \
-    room.cpp \
     graphicstext.cpp \
     graphicstextdialog.cpp \
-    container.cpp \
-    containertablemodel.cpp \
     brushstyledialog.cpp \
     winetypedialog.cpp \
     winetypeview.cpp \
@@ -42,15 +39,12 @@ SOURCES += \
     abstractwinetablemodel.cpp \
     graphicsobject.cpp \
     bottle.cpp \
-    containerwindow.cpp \
-    containerscene.cpp \
     abstractscene.cpp \
     rectgraphicsobject.cpp \
     zone.cpp \
     abstractrectmodel.cpp \
     zonetablemodel.cpp \
     abstractbottle.cpp \
-    containerbottle.cpp \
     wineryquerydialog.cpp \
     winerymodel.cpp \
     querydialog.cpp \
@@ -66,15 +60,20 @@ SOURCES += \
     appellationmodel.cpp \
     grapevarietyselectiondialog.cpp \
     winetypeevent.cpp \
-    photoformdialog.cpp
+    photoformdialog.cpp \
+    storage.cpp \
+    storagebottle.cpp \
+    storagetablemodel.cpp \
+    storagewindow.cpp \
+    abstractstoragescene.cpp \
+    cellar.cpp \
+    storagedelegate.cpp \
+    container.cpp
 
 HEADERS += \
         winecavemainwindow.h \
-    room.h \
     graphicstext.h \
     graphicstextdialog.h \
-    container.h \
-    containertablemodel.h \
     brushstyledialog.h \
     winetypedialog.h \
     winetypeview.h \
@@ -86,15 +85,12 @@ HEADERS += \
     abstractwinetablemodel.h \
     graphicsobject.h \
     bottle.h \
-    containerwindow.h \
-    containerscene.h \
     abstractscene.h \
     rectgraphicsobject.h \
     zone.h \
     abstractrectmodel.h \
     zonetablemodel.h \
     abstractbottle.h \
-    containerbottle.h \
     wineryquerydialog.h \
     winerymodel.h \
     querydialog.h \
@@ -110,7 +106,15 @@ HEADERS += \
     appellationmodel.h \
     grapevarietyselectiondialog.h \
     winetypeevent.h \
-    photoformdialog.h
+    photoformdialog.h \
+    storage.h \
+    storagebottle.h \
+    storagetablemodel.h \
+    storagewindow.h \
+    abstractstoragescene.h \
+    cellar.h \
+    storagedelegate.h \
+    container.h
 
 FORMS += \
     bottleDialog.ui \
@@ -121,3 +125,8 @@ FORMS += \
 
 RESOURCES += \
     res.qrc
+
+DISTFILES += \
+    bottle.qmodel \
+    cellar.qmodel \
+    scene.qmodel

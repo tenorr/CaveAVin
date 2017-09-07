@@ -1,37 +1,26 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#include "room.h"
-#include "containerwindow.h"
-#include "rectgraphicsobject.h"
+#include "abstractstoragescene.h"
 
+class StorageDelegate;
+class Zone;
 
-class Room;
-
-class Container : public RectGraphicsObject
+class Container : public AbstractStorageScene
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
-    Container(QSqlRecord rec, Room *room, QGraphicsItem *parent = Q_NULLPTR);
+    Container(int containerId, QObject *parent = Q_NULLPTR);
 
-    int containerType() const;
-    void setContainerType(int containerType);
-
-    int type() const;
-
-    Room *room() const;
-    void setRoom(Room *room);
-
-protected:
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-
-    void clearBottleChildren();
-    void clearZoneChildren();
+public slots:
+    void createZone();
+    void createBottle();
+    void createBottleFromZone(QPointF position, Zone *zone);
 
 private:
-    int m_containerType;
-    Room* m_room;
-
+    virtual void createContextMenu();
+    void solveZeroPositionIssue(StorageBottle* bottle);
 };
 
 #endif // CONTAINER_H

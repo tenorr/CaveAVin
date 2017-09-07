@@ -1,68 +1,87 @@
 #include "container.h"
 
-Container::Container(QSqlRecord rec, Room * room, QGraphicsItem *parent)
-    : RectGraphicsObject(rec, parent)
+Container::Container(int containerId, QObject *parent)
+    :AbstractStorageScene (containerId,parent)
 {
-    //Set pointer to  room
-    setRoom(room);
+    createContextMenu();
+    delegate()->setConnectCellar();
 
-    // Set container Type from record
-    setContainerType(rec.value("Type").toInt());
-}
+    // Add color and brush style and paint the rectangle
+    QPen pen;
+    pen.setWidth(10);
+    pen.setColor(color());
+    QBrush brush(color());
+    brush.setStyle(brushStyle());
 
-int Container::containerType() const
-{
-    return m_containerType;
-}
+    addRect(10,10,width()-20,height()-20,pen,brush);
 
-void Container::setContainerType(int containerType)
-{
-    m_containerType = containerType;
-}
+    // Add Container Name
+    setName(new GraphicsText);
 
-void Container::clearBottleChildren()
-{
-    QList<QGraphicsItem *> bottleItems = childItems();
-    foreach (QGraphicsItem * item, bottleItems) {
-        if (item->type()==UserType+1) {
-            Bottle *bottle = static_cast<Bottle *>(item);
-            bottle->setSublocationId(0);
-            QPointF bPos = bottle->pos()+pos();
-            bottle->setPos(bPos);
-            bottle->setParentItem(0);
-            bottle->bottleModel()->changeContainer(bottle->id(),0);
-        }
+    // Populate Container with zones
+    foreach (Zone * zone, delegate()->zones()) {
+        addItem(zone);
+        connect(zone,&Zone::bottleCreationRequested,this,&Container::createBottleFromZone);
     }
+
+     // Populate Container with bottles
+    foreach (StorageBottle* bottle, delegate()->bottles()) {
+        if (bottle->sublocationId()==0) {
+            solveZeroPositionIssue(bottle);
+            addItem(bottle);
+         }
+   }
 }
 
-void Container::clearZoneChildren()
+void Container::createZone()
 {
-    room()->zoneModel()->deleteContainerZones(id());
+    // Create Zone and Database entry
+    Zone *newZone = delegate()->createZone(contextPosition());
+    connect(newZone,&Zone::bottleCreationRequested,this,&Container::createBottleFromZone);
+
+    // Add Item on scene
+    addItem(newZone);
 }
 
-Room *Container::room() const
+void Container::createBottle()
 {
-    return m_room;
+   StorageBottle *bottle = delegate()->createBottle(contextPosition());
+
+   // If bottle created add item on scene
+   if (bottle) {
+       addItem(bottle);
+       // Reposition on cellar
+       delegate()->positionBottleOnCellar(bottle->id(),contextPosition());}
 }
 
-void Container::setRoom(Room *containerModel)
+void Container::createBottleFromZone(QPointF position, Zone *zone)
 {
-    m_room = containerModel;
+    // Create bottle (converted into zone position by delegate
+    StorageBottle *bottle = delegate()->createBottle(position,zone);
+    if (bottle)
+        // Reposition on cellar
+        delegate()->positionBottleOnCellar(bottle->id(),position);
 }
 
-
-int Container::type() const
+void Container::createContextMenu()
 {
-    return UserType;
+    QMenu * menu = new QMenu;
+    menu->addAction(tr("Create Zone"), this, SLOT(createZone()));
+    menu->addAction(tr("Create Bottle"), this, SLOT(createBottle()));
+    setContextMenu(menu);
 }
 
-void Container::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void Container::solveZeroPositionIssue(StorageBottle *bottle)
 {
-    if (event) {
-
-    ContainerWindow *w = new ContainerWindow(id(),room(),static_cast<QWidget *>(room()->views()[0]));
-    w->setAttribute(Qt::WA_DeleteOnClose,true);
-    w->show();
-    connect(w->containerScene(),&ContainerScene::bottleToBeDeleted,room(),&Room::deleteBottle);
+    QPointF bottlePos = bottleModel()->storagePosition(bottle->id());
+    // Test if position at (0,0)
+    if (bottlePos.isNull()) {
+    // Find the first available position with no Graphics item
+     // WARNING don't take into account the width of the scene
+        bottlePos=bottlePos+QPointF(40,15);
+        while (items(bottlePos).size() >1)
+            bottlePos = bottlePos + QPointF(20,0);
+        bottleModel()->setStoragePosition(bottle->id(), QPointF(bottlePos.x(),15));
+        bottle->setPos(bottlePos);
     }
 }
