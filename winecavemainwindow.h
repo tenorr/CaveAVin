@@ -1,8 +1,8 @@
 #ifndef WINECAVEMAINWINDOW_H
 #define WINECAVEMAINWINDOW_H
 
-#include "room.h"
-#include "containertablemodel.h"
+#include "cellar.h"
+#include "storagetablemodel.h"
 #include "bottletablemodel.h"
 
 #include <QMainWindow>
@@ -31,14 +31,14 @@ void setMenus(QMenu **menus);
 QGraphicsView *graphicsView() const;
 void setGraphicsView(QGraphicsView *graphicsView);
 
-Room *room() const;
-void setRoom(Room *room);
+Cellar *cellar() const;
+void setCellar(Cellar *cellar);
 
 QSqlDatabase db() const;
 void setDb();
 
-ContainerTableModel *containerTableModel() const;
-void setContainerTableModel(ContainerTableModel *containerTableModel);
+StorageTableModel *storageTableModel() const;
+void setStorageTableModel(StorageTableModel *storageTableModel);
 
 BottleTableModel *bottleTableModel() const;
 void setBottleTableModel(BottleTableModel *bottleTableModel);
@@ -49,12 +49,13 @@ void setZoneTableModel(ZoneTableModel *zoneTableModel);
 public slots:
 void defineWineTypes();
 
+
 private:
 QMenu ** m_menus;
 QGraphicsView *m_graphicsView;
-Room *m_room;
+Cellar *m_cellar;
 QSqlDatabase m_db;
-ContainerTableModel *m_containerTableModel;
+StorageTableModel *m_storageTableModel;
 BottleTableModel *m_bottleTableModel;
 ZoneTableModel * m_zoneTableModel;
 

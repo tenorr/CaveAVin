@@ -11,14 +11,17 @@ class BottleTableModel : public AbstractWineTableModel
 public:
     BottleTableModel(QObject *parent = Q_NULLPTR, QSqlDatabase db = QSqlDatabase());
 
-//    void repositionBottle(int id);TODELETE
+    QPointF storagePosition(int id);
+    void setStoragePosition(int id, QPointF position);
+
+    //    void repositionBottle(int id);TODELETE
 
 public slots:
     void changeRectangleData(QRectF data, int id);
-    void changeContainerRectangleData(QRectF data, int id);
-    void changeContainer(int bottleId, int newContainerId);
+    void changeStorageRectangleData(QRectF data, int id);
+    void changeStorage(int bottleId, int newStorageId);
     void changeZone(int bottleId, int newZoneId);
-    void deleteBottle(int bottleId);
+    bool deleteBottle(int bottleId);
 
 };
 

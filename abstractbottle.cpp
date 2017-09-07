@@ -198,12 +198,15 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
         // Or update Record
         else {
             bottleModel()->setRecord(row,rec);
-            // Change Wine Type if needed
-            int wineTypeId = dialog->wineType();
-            if (wineType() != wineTypeId)
-                setWineType(wineTypeId);
         }
-    bottleModel()->submitAll();
+     bottleModel()->submitAll();
+
+    // Change Wine Type if needed
+    int wineTypeId = dialog->wineType();
+    if (wineType() != wineTypeId)
+        setWineType(wineTypeId);
+
+    // Delete dialog
     dialog->deleteLater();
     return true;
 }

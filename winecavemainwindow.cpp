@@ -18,15 +18,15 @@ WineCaveMainWindow::WineCaveMainWindow(QWidget *parent) :
       setDb();
 
      // Create TableModels
-      setContainerTableModel(new ContainerTableModel(this,db()));
+      setStorageTableModel(new StorageTableModel(this,db()));
       setBottleTableModel(new BottleTableModel(this,db()));
       setZoneTableModel(new ZoneTableModel(this,db()));
 
     // Create Graphics View and affect to central Widget
     setGraphicsView(new QGraphicsView);
 
-    // Create Room (Default Id =1)
-    setRoom(new Room(containerTableModel(),bottleTableModel(),zoneTableModel(),1,this));
+    // Create Cellar (Default Id =1)
+    setCellar(new Cellar(storageTableModel(),bottleTableModel(),zoneTableModel(),1,this));
 }
 
 WineCaveMainWindow::~WineCaveMainWindow()
@@ -81,17 +81,17 @@ void WineCaveMainWindow::setGraphicsView(QGraphicsView *graphicsView)
     m_graphicsView = graphicsView;
 }
 
-Room *WineCaveMainWindow::room() const
+Cellar *WineCaveMainWindow::cellar() const
 {
-    return m_room;
+    return m_cellar;
 }
 
-void WineCaveMainWindow::setRoom(Room *room)
+void WineCaveMainWindow::setCellar(Cellar *cellar)
 {
-    // Assign Room To Graphics View
-    graphicsView()->setScene(room);
+    // Assign Cellar To Graphics View
+    graphicsView()->setScene(cellar);
 
-    m_room = room;
+    m_cellar = cellar;
 }
 
 void WineCaveMainWindow::defineWineTypes()
@@ -122,14 +122,14 @@ void WineCaveMainWindow::setBottleTableModel(BottleTableModel *bottleTableModel)
     m_bottleTableModel = bottleTableModel;
 }
 
-ContainerTableModel *WineCaveMainWindow::containerTableModel() const
+StorageTableModel *WineCaveMainWindow::storageTableModel() const
 {
-    return m_containerTableModel;
+    return m_storageTableModel;
 }
 
-void WineCaveMainWindow::setContainerTableModel(ContainerTableModel *containerTableModel)
+void WineCaveMainWindow::setStorageTableModel(StorageTableModel *storageTableModel)
 {
-    m_containerTableModel = containerTableModel;
+    m_storageTableModel = storageTableModel;
 }
 
 QSqlDatabase WineCaveMainWindow::db() const

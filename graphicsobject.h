@@ -27,8 +27,8 @@ public:
     Qt::BrushStyle brushStyle() const;
     void setBrushStyle(const Qt::BrushStyle &brushStyle);
 
-    void changeRectangleSize(QPointF dPos);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    virtual void changeRectangleSize(QPointF dPos);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
     void rectangleDataChanged(QRectF data, int id);

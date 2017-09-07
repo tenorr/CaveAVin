@@ -1,13 +1,14 @@
 #ifndef ABSTRACTSCENE_H
 #define ABSTRACTSCENE_H
 
+#include <QGraphicsScene>
+
 #include "bottletablemodel.h"
 #include "graphicstext.h"
 #include "zonetablemodel.h"
 #include "abstractbottle.h"
 #include "winetypeevent.h"
 
-#include <QGraphicsScene>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -53,7 +54,7 @@ public slots:
 
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent);
-    virtual void createContextMenu() =0;
+    virtual void createContextMenu();
     virtual bool event(QEvent *event);
     virtual void wineTypeEvent(WineTypeEvent *event);
 

@@ -93,6 +93,11 @@ void AbstractScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenu
     }
 }
 
+void AbstractScene::createContextMenu()
+{
+
+}
+
 bool AbstractScene::event(QEvent *event)
 {
     if (event->type() == QEvent::User) {
