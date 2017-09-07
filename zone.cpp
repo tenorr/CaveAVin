@@ -1,5 +1,5 @@
-#include "containerbottle.h"
 #include "zone.h"
+#include "storagebottle.h"
 #include <QDebug>
 
 Zone::Zone(QSqlRecord rec, QGraphicsItem *parent)
@@ -15,27 +15,38 @@ int Zone::type() const
 
 void Zone::createBottle()
 {
-    ContainerScene *containerScene = static_cast<ContainerScene *>(scene());
-    // Create the Container Bottle
-    ContainerBottle * bottle = containerScene->createContainerBottle(contextPosition());
-    // Set container Bottle to Zone
-    bottle->changeZone(this);
+    emit bottleCreationRequested(contextPosition(), this);
+   
 }
 
 void Zone::changeRectangleData()
 {
     // Find ChildItem of Type Container Bottle
-    ContainerScene * containerScene = static_cast<ContainerScene *>(scene());
     QList<QGraphicsItem *> bottleList = childItems();
     foreach (QGraphicsItem * item, bottleList) {
         if (item->type() == UserType+3) {
-            ContainerBottle * bottle = static_cast<ContainerBottle *>(item);
-            // Get bottle Id and container position
+            StorageBottle * bottle = static_cast<StorageBottle *>(item);
+            // Get bottle Id and storage position
             int bottleId = bottle->id();
             QPointF changedPos = bottle->scenePos();
-            // Position the bottle in the Room accordingly
-            containerScene->requestBottlePositioning(bottleId, changedPos);
+            // emit signal to Position the bottle in the Cellar accordingly
+            emit bottlePositioningRequested(bottleId, changedPos);
         }
     }
     GraphicsObject::changeRectangleData();
+}
+
+void Zone::clearBottleChildren()
+{
+   QList<QGraphicsItem *> bottleItems = childItems();
+   foreach (QGraphicsItem * item, bottleItems) {
+    if (item->type()==UserType+3) {
+       StorageBottle *bottle = static_cast<StorageBottle *>(item);
+       bottle->setSublocationId(0);
+       bottle->setParentItem(0);
+       QPointF bPos = bottle->pos()+pos();
+       bottle->setPos(bPos);
+       bottle->bottleModel()->changeZone(bottle->id(),0);
+    }
+   }
 }
