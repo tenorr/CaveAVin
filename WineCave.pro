@@ -68,7 +68,10 @@ SOURCES += \
     abstractstoragescene.cpp \
     cellar.cpp \
     storagedelegate.cpp \
-    container.cpp
+    container.cpp \
+    matrixscene.cpp \
+    rackelement.cpp \
+    matrixrackelement.cpp
 
 HEADERS += \
         winecavemainwindow.h \
@@ -114,7 +117,10 @@ HEADERS += \
     abstractstoragescene.h \
     cellar.h \
     storagedelegate.h \
-    container.h
+    container.h \
+    matrixscene.h \
+    rackelement.h \
+    matrixrackelement.h
 
 FORMS += \
     bottleDialog.ui \

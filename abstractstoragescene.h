@@ -26,6 +26,9 @@ protected:
     QColor color();
     Qt::BrushStyle brushStyle();
     void setTableRatio();
+    void solveZeroPositionIssue(StorageBottle *bottle);
+    QPointF firstAvailableZeroPosition();
+
 
 private:
     int m_cellarId;

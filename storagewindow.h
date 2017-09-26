@@ -3,12 +3,15 @@
 
 class AbstractStorageScene;
 #include "container.h"
+#include "matrixscene.h"
 #include "cellar.h"
 #include "storagedelegate.h"
 
 #include <QGraphicsView>
 #include <QMainWindow>
 #include <QMenuBar>
+
+#define RACK_DEFAULT 50
 
 class Cellar;
 class StorageDelegate;
@@ -36,6 +39,9 @@ public:
     int storageId() const;
     void setStorageId(int storageId);
 
+    int storageType() const;
+    void setStorageType();
+
     StorageDelegate *delegate();
     void setDelegate(StorageDelegate *delegate);
 
@@ -44,7 +50,7 @@ protected:
 
 private:
     QRect getGeometryFromDatabase(int storageId);
-    AbstractStorageScene * findStorageType();
+    AbstractStorageScene * findStorageTypeScene();
 
 private:
     QMenu ** m_menus;
@@ -52,6 +58,7 @@ private:
     AbstractStorageScene *m_storageScene;
     Cellar *m_cellar;
     int m_storageId;
+    int m_storageType;
     StorageDelegate *m_delegate;
 };
 

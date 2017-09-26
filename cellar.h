@@ -26,6 +26,7 @@ public slots:
     void createStorage();
     void deleteStorage(int id);
     void createBottle();
+    void changeBottleWineType(int bottleId, int wineTypeId);
 
 private:
     void addStorage(QSqlRecord rec);

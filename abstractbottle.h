@@ -43,6 +43,7 @@ public slots:
 
 signals:
     void bottleToBeDeleted(int id);
+    void wineTypeChanged(int bottleId, int wineTypeId);
 
 protected:
     QRectF boundingRect() const;

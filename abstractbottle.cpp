@@ -203,8 +203,10 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
 
     // Change Wine Type if needed
     int wineTypeId = dialog->wineType();
-    if (wineType() != wineTypeId)
+    if (wineType() != wineTypeId) {
         setWineType(wineTypeId);
+        emit wineTypeChanged(id(), wineTypeId);
+    }
 
     // Delete dialog
     dialog->deleteLater();

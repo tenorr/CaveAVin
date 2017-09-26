@@ -70,9 +70,22 @@ void BottleTableModel::changeStorage(int bottleId, int newStorageId)
     if (row !=-1) {
     QSqlRecord rec = record(row);
     rec.setValue("Storage",newStorageId);
+    rec.setValue("RackElement",0);
     rec.setValue("Zone",0);
     rec.setValue("StorageX",0);
     rec.setValue("StorageY",0);
+    setRecord(row,rec);
+    submitAll();
+    }
+}
+
+void BottleTableModel::changeRackElement(int bottleId, int newRackElementId)
+{
+    int row = rowPosition(bottleId);
+
+    if (row !=-1) {
+    QSqlRecord rec = record(row);
+    rec.setValue("RackElement",newRackElementId);
     setRecord(row,rec);
     submitAll();
     }
@@ -85,6 +98,7 @@ void BottleTableModel::changeZone(int bottleId, int newZoneId)
     if (row !=-1) {
     QSqlRecord rec = record(row);
     rec.setValue("Zone",newZoneId);
+    rec.setValue("RackElement",0);
     setRecord(row,rec);
     submitAll();
     }

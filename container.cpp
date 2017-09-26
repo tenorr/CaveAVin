@@ -71,17 +71,3 @@ void Container::createContextMenu()
     setContextMenu(menu);
 }
 
-void Container::solveZeroPositionIssue(StorageBottle *bottle)
-{
-    QPointF bottlePos = bottleModel()->storagePosition(bottle->id());
-    // Test if position at (0,0)
-    if (bottlePos.isNull()) {
-    // Find the first available position with no Graphics item
-     // WARNING don't take into account the width of the scene
-        bottlePos=bottlePos+QPointF(40,15);
-        while (items(bottlePos).size() >1)
-            bottlePos = bottlePos + QPointF(20,0);
-        bottleModel()->setStoragePosition(bottle->id(), QPointF(bottlePos.x(),15));
-        bottle->setPos(bottlePos);
-    }
-}

@@ -1,13 +1,16 @@
 #include "storagedelegate.h"
+#include <QDebug>
 
 StorageDelegate::StorageDelegate(int storageId, QObject *parent)
     :QObject (parent)
 {
     setConnectCellar(false); // connection not activated by default
     setStorageId(storageId);
- // Find every zone and bottles of the storage
+
+ // Find every zone, bottles and rack >elements of the storage
     setZones();
     setBottles();
+    setRackElements();
 }
 
 Cellar *StorageDelegate::cellar()
@@ -35,6 +38,7 @@ ZoneTableModel *StorageDelegate::zoneModel()
     return cellar()->zoneModel();
 }
 
+
 Zone *StorageDelegate::createZone(QPointF position)
 {
     // Create a new record into the tableModel
@@ -49,7 +53,7 @@ Zone *StorageDelegate::createZone(QPointF position)
    return zone;
 }
 
-StorageBottle *StorageDelegate::createBottle(QPointF position, Zone *zone)
+StorageBottle *StorageDelegate::createBottle(QPointF position, Zone *zone, int radius, int rackElementId)
 {
     // Retrieve SQL record and complete position information
      QSqlRecord rec = bottleModel()->record();
@@ -63,7 +67,8 @@ StorageBottle *StorageDelegate::createBottle(QPointF position, Zone *zone)
      rec.setValue("StorageX", toZonePosition(position,zone).x());
      rec.setValue("StorageY", toZonePosition(position,zone).y());
      rec.setValue("CellarR",40);
-     rec.setValue("StorageR",40);
+     rec.setValue("StorageR",radius);
+     rec.setValue("RackElement",rackElementId);
 
      // Create temporary bottle
      StorageBottle *bottle = new StorageBottle(rec,bottleModel(),zone);
@@ -73,7 +78,7 @@ StorageBottle *StorageDelegate::createBottle(QPointF position, Zone *zone)
         bottleModel()->submitAll();
         bottleModel()->select();
         connectStorageBottleSignals(bottle);
-        bottles() << bottle;
+        appendBottle(bottle);
         return bottle;
             }
     // if not, delete newly created Storage Bottle and return Null
@@ -114,6 +119,116 @@ void StorageDelegate::positionBottleOnCellar(int bottleId, QPointF position)
     cellar()->positionBottle(bottleId,convertPosition(position));
 }
 
+
+QList<RackElement *> StorageDelegate::rackElements()
+{
+    return m_rackElements;
+}
+
+void StorageDelegate::setRackElements()
+{
+    QList <RackElement *> rackElements;
+    QVector<int> disabledItems; // List of disabledElement
+
+   // Find data for RackElements
+    QString storageData = QString();
+    int rowCount =0;
+    int columnCount =0;
+
+    QSqlQuery query;
+    query.prepare(QString("SELECT StorageData, RowCount, ColumnCount, DisabledItems, RackHint FROM Storage WHERE Id = %1").arg(storageId()));
+    query.exec();
+    if (query.first()) {
+        storageData = query.value("StorageData").toString();
+        rowCount = query.value("RowCount").toInt();
+        columnCount = query.value("ColumnCount").toInt();
+        setRackHint(query.value("RackHint").toInt());
+        disabledItems = StorageTableModel::disableItems(query.value("DisabledItems").toString());
+    }
+
+// Build RackElements
+    for (int i =0;i<rowCount;i++) {
+        for (int j=0;j<columnCount;j++)  {
+            // Find if Rectangle or Circle text
+            if ((storageData == "Rectangle") || (storageData == "Circle")) {
+                int number = i*columnCount+j+1;
+                MatrixRackElement *item= new MatrixRackElement(number,(storageData == "Circle"),(disabledItems.indexOf(number) == -1));
+                item->setRect(QRectF(0,0,rackHint(),rackHint()));
+                rackElements << item;
+            }
+       }
+    }
+
+    m_rackElements = rackElements;
+}
+
+RackElement *StorageDelegate::rackElementItem(int number)
+{
+    // Return the item by number
+    foreach (RackElement *item, rackElements()) {
+        if (item->number() == number)
+            return item;
+    }
+    return Q_NULLPTR;   // If not found
+}
+
+void StorageDelegate::setRackElementEnabled(RackElement *item, bool fEnabled)
+{
+    // Change enabled flag in item
+    item->enableElement(fEnabled);
+
+    // Change the disabled list in the database
+    QSqlQuery query;
+    query.prepare(QString("UPDATE Storage SET DisabledItems = '%1' WHERE Id = %2").arg(disableItemsText()).arg(storageId()));
+    query.exec();
+}
+
+void StorageDelegate::setRackCircular(bool fCircular)
+{
+    foreach (RackElement * rackElement, rackElements()) {
+        MatrixRackElement * item = static_cast<MatrixRackElement *>(rackElement);
+        if (item)
+            item->setCircular(fCircular);
+    }
+
+    // Update DataBase
+    QString storageData = (fCircular)? "Circle" : "Rectangle";
+    QSqlQuery query;
+    query.prepare(QString("UPDATE Storage SET StorageData = '%1' WHERE Id = %2").arg(storageData).arg(storageId()));
+    query.exec();
+}
+
+
+int StorageDelegate::rackHint() const
+{
+    return m_rackHint;
+}
+
+void StorageDelegate::setRackHint(int rankHint)
+{
+    m_rackHint = rankHint;
+}
+
+int StorageDelegate::storageColumnCount() const
+{
+    return m_storageColumnCount;
+}
+
+void StorageDelegate::setStorageColumnCount(int storageColumnCount)
+{
+    m_storageColumnCount = storageColumnCount;
+}
+
+int StorageDelegate::storageRowCount() const
+{
+    return m_storageRowCount;
+}
+
+void StorageDelegate::setStorageRowCount(int storageRowCount)
+{
+    m_storageRowCount = storageRowCount;
+}
+
 QPointF StorageDelegate::ratios() const
 {
     return m_ratios;
@@ -136,6 +251,30 @@ QPointF StorageDelegate::toZonePosition(QPointF position, Zone *zone)
         return position - zone->scenePos();
 
     return position;
+}
+
+QString StorageDelegate::disableItemsText()
+{
+    // Retrieve Disabled List
+      QVector<int> disabledItems; // List of disabledElement
+      foreach (RackElement * item, rackElements()) {
+          if (!item->isEnabled())
+              disabledItems << item->number();
+      }
+    // Sort list
+    std::sort(disabledItems.begin(),disabledItems.end());
+
+    // Build text
+    QString str = QString();
+    if (!disabledItems.isEmpty()) {
+        str ="{";
+        foreach (int n, disabledItems) {
+            str += QString::number(n)+",";
+        }
+        str.chop(1); // Delete last coma
+        str +="}";
+    }
+    return str;
 }
 
 bool StorageDelegate::connectCellar() const
@@ -200,12 +339,13 @@ void StorageDelegate::connectStorageBottleSignals(StorageBottle *bottle)
     if (bottle) {
         connect(bottle,&StorageBottle::rectangleDataChanged,bottleModel(),&BottleTableModel::changeStorageRectangleData);
         connect(bottle,&StorageBottle::bottleToBeDeleted,this,&StorageDelegate::deleteBottle);
+        connect(bottle,&StorageBottle::wineTypeChanged,cellar(),&Cellar::changeBottleWineType);
         if (connectCellar())
             connect(bottle, &StorageBottle::bottlePositioningRequested,this,&StorageDelegate::positionBottleOnCellar);
     }
 }
 
-QList<StorageBottle *> StorageDelegate::bottles() const
+QList<StorageBottle *> StorageDelegate::bottles()
 {
     return m_bottles;
 }
@@ -222,6 +362,20 @@ void StorageDelegate::setBottles()
              }
          }
     m_bottles = bottles;
+}
+
+void StorageDelegate::appendBottle(StorageBottle *bottle)
+{
+    m_bottles.append(bottle);
+}
+
+StorageBottle *StorageDelegate::findBottle(int bottleId)
+{
+    foreach (StorageBottle *bottle, bottles()) {
+          if (bottle->id() == bottleId)
+                return bottle;
+    }
+    return Q_NULLPTR;
 }
 
 QList<Zone *> StorageDelegate::zones() const

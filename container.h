@@ -20,7 +20,6 @@ public slots:
 
 private:
     virtual void createContextMenu();
-    void solveZeroPositionIssue(StorageBottle* bottle);
 };
 
 #endif // CONTAINER_H

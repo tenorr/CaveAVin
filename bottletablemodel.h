@@ -20,6 +20,7 @@ public slots:
     void changeRectangleData(QRectF data, int id);
     void changeStorageRectangleData(QRectF data, int id);
     void changeStorage(int bottleId, int newStorageId);
+    void changeRackElement (int bottleId, int newRackElementId);
     void changeZone(int bottleId, int newZoneId);
     bool deleteBottle(int bottleId);
 

@@ -81,14 +81,15 @@ void AbstractScene::deleteBottle(int bottleId)
 void AbstractScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)
 {
     if (contextMenuEvent) {
-
-        if (itemAt(contextMenuEvent->scenePos(),QTransform())->type()>=QGraphicsItem::UserType)
-            QGraphicsScene::contextMenuEvent(contextMenuEvent);
-        else {
-            // Store context menu position
-            setContextPosition(contextMenuEvent->scenePos());
-            // Execute Context Menu
-            contextMenu()->exec(contextMenuEvent->screenPos());
+        if (contextMenu()) {
+            if (itemAt(contextMenuEvent->scenePos(),QTransform())->type()>=QGraphicsItem::UserType)
+                QGraphicsScene::contextMenuEvent(contextMenuEvent);
+            else {
+                // Store context menu position
+                setContextPosition(contextMenuEvent->scenePos());
+                // Execute Context Menu
+                contextMenu()->exec(contextMenuEvent->screenPos());
+            }
         }
     }
 }

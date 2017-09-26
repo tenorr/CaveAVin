@@ -12,6 +12,10 @@ StorageBottle::StorageBottle(QSqlRecord rec, BottleTableModel *bottleModel, QGra
     // Position the bottle on screen
        QPointF pos = QPointF(rec.value("StorageX").toDouble(),rec.value("StorageY").toDouble());
        setPos(pos);
+
+    // Store rackElement if any
+       setRackElement(rec.value("RackElement").toInt());
+
        fPositioning = true;
 }
 
@@ -44,6 +48,16 @@ void StorageBottle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
          // Change Zone if so
          if (newZoneId != currentZoneId)
              changeZone(newZone);
+
+        // Look for a rack element and emit a signal to the storage scene
+         int iRack=-1;
+         for (int i=0, n=cItems.size();i<n;i++) {
+             if ((cItems.at(i)->type()== UserType+5) and  cItems.at(i)->isUnderMouse()) {
+                 iRack=i;
+                 break;
+             }
+         }
+          emit rackElementReached(id(), (iRack ==-1)? 0 : cItems.at(iRack)->data(0).toInt());
     }
     QGraphicsObject::mouseReleaseEvent(event);
 }
@@ -77,4 +91,14 @@ void StorageBottle::changeRectangleData()
          emit bottlePositioningRequested(id(), scenePos());
 
         GraphicsObject::changeRectangleData();
+}
+
+int StorageBottle::rackElement() const
+{
+    return m_rackElement;
+}
+
+void StorageBottle::setRackElement(int rackElement)
+{
+    m_rackElement = rackElement;
 }

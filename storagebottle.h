@@ -14,8 +14,11 @@ class StorageBottle : public AbstractBottle
 public:
     StorageBottle(QSqlRecord rec, BottleTableModel *bottleModel, QGraphicsItem *parent = Q_NULLPTR);
 
-    int type() const;
+    int type() const; // UserType+3;
     void changeZone(Zone *newZone);
+
+    int rackElement() const;
+    void setRackElement(int rackElement);
 
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
@@ -23,12 +26,14 @@ protected:
 
 signals:
     void bottlePositioningRequested(int bottleid,  QPointF changedPosition);
+    void rackElementReached(int bottleid, int rackElement);
 
 public slots:
    virtual void changeRectangleData();
 
 private:
     bool fPositioning;
+    int m_rackElement;
 };
 
 #endif // STORAGEBOTTLE_H

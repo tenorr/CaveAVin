@@ -46,3 +46,69 @@ QString StorageTableModel::encodeFromQRect(const QRect rect)
     str.append(")");
     return str;
 }
+
+QVector<int> StorageTableModel::disableItems(const QString &text)
+{
+    QVector<int> itemList;
+    if (!text.isEmpty()) {
+        QString str = text;
+
+        // Delete brackets
+        str.remove(0,str.indexOf("{")+1);
+        str.chop(1);
+
+        // Split the list and convert to integer
+        QStringList strList = str.split(",");
+
+        for (int i=0, n= strList.size(); i<n;i++) {
+            itemList.append(strList.at(i).toInt());
+        }
+    }
+    return itemList;
+}
+
+QString StorageTableModel::removeDisableItem(const QString & text,int item)
+{
+     QString str = text;
+     // Delete brackets
+     str.remove(0,str.indexOf("{")+1);
+     str.chop(1);
+
+     // Split the list and find the position of the item in the list
+     QStringList itemList = str.split(",");
+     for (int i=0 , n= itemList.size();i<n;i++) {
+         if (itemList.at(i).toInt() == item) {
+             itemList.removeAt(i);
+             break;
+         }
+     }
+     if (itemList.isEmpty())
+         return  QString();
+
+     return  "{"+itemList.join(",")+"}";
+}
+
+QString StorageTableModel::addDisableItem(const QString & text,int item)
+{
+     if (text.isEmpty())
+         return "{"+QString::number(item)+ "}";
+
+     QString str = text;  
+     // Delete brackets
+     str.remove(0,str.indexOf("{")+1);
+     str.chop(1);
+
+     // Split the list and find the position of the item in the list
+     QStringList itemList = str.split(",");
+     for (int i=0, n= itemList.size();i<n;i++) {
+         if (itemList.at(i).toInt() > item) {
+             itemList.insert(i, QString::number(item));
+             break;
+         }
+         // Insert at last if not found
+         if (i==n-1)
+             itemList.append(QString::number(item));
+     }
+     // Join the list
+     return  "{"+itemList.join(",")+"}";
+}

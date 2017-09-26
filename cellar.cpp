@@ -86,6 +86,13 @@ void Cellar::createBottle()
     delete bottle;
 }
 
+void Cellar::changeBottleWineType(int bottleId, int wineTypeId)
+{
+    Bottle * bottle = findBottle(bottleId);
+    if (bottle)
+        bottle->setWineType(wineTypeId);
+}
+
 void Cellar::addStorage(QSqlRecord rec)
 {
     // Check if rec is about to the Cellar

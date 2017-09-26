@@ -3,6 +3,8 @@
 
 #include "cellar.h"
 class AbstractStorageScene;
+#include "rackelement.h"
+#include "matrixrackelement.h"
 #include "storagebottle.h"
 #include "zone.h"
 
@@ -10,6 +12,7 @@ class AbstractStorageScene;
 #include <QSqlDatabase>
 
 class Cellar;
+class StorageBottle;
 
 class StorageDelegate : public QObject
 {
@@ -24,14 +27,25 @@ public:
     ZoneTableModel *zoneModel();
 
     Zone *createZone(QPointF position);
-    StorageBottle *createBottle(QPointF position, Zone *zone = Q_NULLPTR);
+    StorageBottle *createBottle(QPointF position, Zone *zone = Q_NULLPTR, int radius = 40, int rackElementId=0);
 
     QList<Zone *> zones() const;
     void setZones();
     
-    QList<StorageBottle *> bottles() const;
+    QList<StorageBottle *> bottles();
     void setBottles();
+    void appendBottle(StorageBottle * bottle);
+
+    QList<RackElement *> rackElements();
+    void setRackElements();
+    RackElement * rackElementItem(int number);
+
+    void setRackElementEnabled(RackElement *item, bool fEnabled);
+
+    void setRackCircular(bool fCircular);
     
+    StorageBottle *findBottle(int bottleId);
+
     int storageId() const;
     void setStorageId(int storageId);
 
@@ -43,11 +57,20 @@ public:
 
     QPointF convertPosition(QPointF storagePosition);
 
-private:
+    int storageRowCount() const;
+    void setStorageRowCount(int storageRowCount);
+
+    int storageColumnCount() const;
+    void setStorageColumnCount(int storageColumnCount);
+
+    int rackHint() const;
+    void setRackHint(int rackHint);
+
     Zone *findBottleZone(int zoneId);
     void connectZoneSignals(Zone* zone);
-    void connectStorageBottleSignals(StorageBottle* bottle);
+    void connectStorageBottleSignals(StorageBottle *bottle);
     QPointF toZonePosition(QPointF position, Zone* zone);
+    QString disableItemsText();
     
 public slots:
     void deleteZone(int zoneId);
@@ -58,7 +81,11 @@ private:
     int m_storageId;
     QList<Zone *> m_zones;
     QList<StorageBottle *> m_bottles;
+    QList<RackElement *> m_rackElements;
     QPointF m_ratios;
+    int m_storageRowCount;
+    int m_storageColumnCount;
+    int m_rackHint;
     bool m_connectCellar;
 };
 

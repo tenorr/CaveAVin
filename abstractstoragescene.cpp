@@ -88,3 +88,26 @@ void AbstractStorageScene::setTableRatio()
     query.exec();
     }
 }
+
+void AbstractStorageScene::solveZeroPositionIssue(StorageBottle *bottle)
+{
+     // WARNING don't take into account the width of the scene
+    QPointF bottlePos = bottleModel()->storagePosition(bottle->id());
+    // Test if position at (0,0)
+    if (bottlePos.isNull()) {
+        bottlePos = firstAvailableZeroPosition();
+        bottleModel()->setStoragePosition(bottle->id(), QPointF(bottlePos.x(),15));
+        bottle->setPos(bottlePos);
+    }
+}
+
+QPointF AbstractStorageScene::firstAvailableZeroPosition()
+{
+     // WARNING don't take into account the width of the scene
+     // Find the first available position with no Graphics item
+    QPointF bottlePos = QPointF(40,15);
+    while (items(bottlePos).size() >1)
+        bottlePos = bottlePos + QPointF(20,0);
+    return bottlePos;
+}
+
