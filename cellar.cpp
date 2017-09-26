@@ -189,4 +189,3 @@ void Cellar::clearBottle(int bottleId)
     // Delete bottle item from scene (without deleting bottle record)
     findBottle(bottleId)->deleteLater();
 }
-

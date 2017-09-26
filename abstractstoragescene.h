@@ -35,3 +35,4 @@ private:
 };
 
 #endif // ABSTRACTSTORAGESCENE_H
+
