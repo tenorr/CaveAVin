@@ -15,7 +15,6 @@ public:
 
     int newId();
     int rowPosition(int id);
-
 };
 
 #endif // ABSTRACTWINETABLEMODEL_H

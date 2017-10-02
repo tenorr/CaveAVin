@@ -1,5 +1,6 @@
 #include "winedialog.h"
 #include <QDebug>
+#include <QSqlRelationalDelegate>
 
 WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::WindowFlags f)
     :PhotoFormDialog(parent,f)
@@ -22,14 +23,20 @@ WineDialog::WineDialog(QSqlDatabase db, int selectedId, QWidget *parent, Qt::Win
     setInitialData(selectedId);
     setInitialWineType(combo().at(indexOf("Type"))->currentIndex());
     setActionButtonEnabled();
+    setPrizeModel(new WinePrizeModel(selectedId,this,db));
 
-   lineEdit().at(indexOf("AppellationId"))->hide();
-   lineEdit().at(indexOf("WineryId"))->hide();
-   lineEdit().at(indexOf("GrapeVariety"))->hide();
-   lineEdit().at(indexOf("LabelImage"))->hide();
+    lineEdit().at(indexOf("AppellationId"))->hide();
+    lineEdit().at(indexOf("WineryId"))->hide();
+    lineEdit().at(indexOf("GrapeVariety"))->hide();
+    lineEdit().at(indexOf("LabelImage"))->hide();
 }
 
-WineModel *WineDialog::wineModel() const
+int WineDialog::wineId()
+{
+    return lineEdit().at(indexOf("Id"))->text().toInt();
+}
+
+WineModel *WineDialog::wineModel()
 {
     return static_cast<WineModel *>(model());
 }
@@ -197,6 +204,7 @@ void WineDialog::doAction()
         wineModel()->setRecord(wineModel()->rowPosition(rec.value("Id").toInt()),rec);}
 
     wineModel()->submitAll();
+    prizeModel()->submitAll();
     accept();
 }
 
@@ -293,6 +301,25 @@ void WineDialog::on_grapeVarietyButton_clicked()
     }
 }
 
+void WineDialog::on_addPrizeButton_clicked()
+{
+    // Add a new row in the table
+    prizeModel()->insertRow(prizeModel()->rowCount());
+}
+
+void WineDialog::on_deletePrizeButton_clicked()
+{
+    // Find the selected row
+    QItemSelectionModel * sModel = prizeView()->selectionModel();
+    if (sModel->hasSelection()) {
+        // Delete row if selection is unique
+        if (sModel->selectedIndexes().count() == 1) {
+            int row = sModel->selectedIndexes().at(0).row();
+            prizeModel()->removeRow(row);
+        }
+    }
+}
+
 void WineDialog::setActionButtonEnabled()
 {
     QPushButton *button = buttonBox()->findChild<QPushButton *>("actionButton");
@@ -334,6 +361,30 @@ void WineDialog::setCombosFromAppellationId(const int &AppellationId)
         setAppellationFields(AppellationId);}
 
     setActionButtonEnabled();
+}
+
+QTableView *WineDialog::prizeView()
+{
+    return findChild<QTableView*>("prizeView");
+}
+
+WinePrizeModel *WineDialog::prizeModel() const
+{
+    return m_prizeModel;
+}
+
+void WineDialog::setPrizeModel(WinePrizeModel *prizeModel)
+{
+    // Assign model and delegate to view
+    prizeView()->setItemDelegate(new QSqlRelationalDelegate(prizeView()));
+    prizeView()->setModel(prizeModel);
+
+    // Hide Id & Wine Id
+    for (int i=0;i<2;i++)
+        prizeView()->hideColumn(i); // Hide Id & WineId Column
+    prizeView()->setColumnWidth(2,150);
+
+    m_prizeModel = prizeModel;
 }
 
 int WineDialog::initialWineType() const

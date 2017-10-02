@@ -71,7 +71,8 @@ SOURCES += \
     container.cpp \
     matrixscene.cpp \
     rackelement.cpp \
-    matrixrackelement.cpp
+    matrixrackelement.cpp \
+    wineprizemodel.cpp
 
 HEADERS += \
         winecavemainwindow.h \
@@ -120,7 +121,8 @@ HEADERS += \
     container.h \
     matrixscene.h \
     rackelement.h \
-    matrixrackelement.h
+    matrixrackelement.h \
+    wineprizemodel.h
 
 FORMS += \
     bottleDialog.ui \

@@ -183,6 +183,9 @@ bool AbstractBottle::changeBottleData(QSqlRecord &rec, int row)
           index = dialog->index("PurchasePrice");
           rec.setValue("PurchasePrice",dialog->doubleSpinBox().at(index)->value());
 
+          index = dialog->index("Notes");
+          rec.setValue("Notes",dialog->textEdit().at(index)->toPlainText());
+
           // Manage bottleType
           index = dialog->index("BottleType");
           rec.setValue("BottleType",dialog->combo().at(index)->currentIndex());

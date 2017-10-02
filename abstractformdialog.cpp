@@ -167,7 +167,7 @@ QList<QDoubleSpinBox *> AbstractFormDialog::doubleSpinBox() const
 
 void AbstractFormDialog::setDoubleSpinBox()
 {
-    m_doubleSpinBox = findChildren<QDoubleSpinBox*>();;
+    m_doubleSpinBox = findChildren<QDoubleSpinBox*>();
 }
 
 QList<QSpinBox *> AbstractFormDialog::spinBox() const

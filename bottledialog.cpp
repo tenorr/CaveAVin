@@ -1,7 +1,6 @@
 ﻿#include "bottledialog.h"
 #include <QDebug>
 
-
 BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidget *parent, Qt::WindowFlags f)
     :PhotoFormDialog(parent, f)
 {
@@ -10,6 +9,10 @@ BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidge
     setDb(db);
 
     setForm(":/form/bottleDialog.ui");
+
+    // Create medals Model and assign to view
+    setMedalsModel(new QSqlRelationalTableModel(this,db));
+
     setInitialData(rec);
 
     lineEdit().at(indexOf("WineryId"))->hide();
@@ -22,6 +25,8 @@ BottleDialog::BottleDialog(QSqlDatabase db, QSqlRecord rec, int iProcess, QWidge
     buttonBox()->addButton(button,QDialogButtonBox::ActionRole);
     connect(buttonBox(), &QDialogButtonBox::rejected, this, &BottleDialog::reject);
     connect(buttonBox(),SIGNAL(clicked(QAbstractButton*)),this,SLOT(doAction(QAbstractButton*)));
+
+
 }
 
 QSqlDatabase BottleDialog::db() const
@@ -134,7 +139,48 @@ void BottleDialog::on_bottleTypeComboBox_currentIndexChanged(int index)
               lineEdit().at(indexOf(str))->setText(QString::number(query.value(str).toInt()));
             else
                 lineEdit().at(indexOf(str))->clear();
+        }
+}
+
+void BottleDialog::on_millesimeComboBox_currentTextChanged(const QString &text)
+{
+    if (text.toInt() !=0) {
+        medalsModel()->setFilter(QString("WineId = %1 AND Millesime = %2").arg(wineId()).arg(text));
+        medalsModel()->select();
     }
+
+}
+
+void BottleDialog::medalsModel_modelReset()
+{
+    // show medals if prize and hide if not
+    medalsGroupShow(medalsModel()->rowCount()>0);
+}
+
+QSqlRelationalTableModel *BottleDialog::medalsModel() const
+{
+    return m_medalsModel;
+}
+
+void BottleDialog::setMedalsModel(QSqlRelationalTableModel *medalsModel)
+{
+    // Set Model
+    medalsModel->setTable("WinePrize");
+    medalsModel->setRelation(3, QSqlRelation("Contest", "Id", "Contest"));
+    medalsModel->setRelation(4, QSqlRelation("Prize", "Id", "Prize"));
+    medalsModel->setSort(3,Qt::AscendingOrder);
+
+    // Assign model and delegate to view
+    prizeView()->setItemDelegate(new QSqlRelationalDelegate(prizeView()));
+    prizeView()->setModel(medalsModel);
+
+    // Hide Id & Wine Id
+    for (int i=0;i<3;i++)
+        prizeView()->hideColumn(i); // Hide Id & WineId & Millesime Column
+
+    // Connect signal for hiding or not medals
+    connect(medalsModel,&QSqlRelationalTableModel::modelReset,this,&BottleDialog::medalsModel_modelReset);
+    m_medalsModel = medalsModel;
 }
 
 
@@ -173,6 +219,7 @@ void BottleDialog::setInitialData(QSqlRecord rec)
     lineEdit().at(indexOf("PurchaseLocation"))->setText(rec.value("PurchaseLocation").toString());
     doubleSpinBox().at(indexOf("PurchasePrice"))->setValue(rec.value("PurchasePrice").toDouble());
     dateEdit().at(indexOf("PurchaseDate"))->setDate((rec.value("PurchaseDate").toDateTime()).date());
+    textEdit().at(indexOf("Notes"))->setText(rec.value("Notes").toString());
 
     // Set Photo Label and load image if exist
     setPhoto();
@@ -214,6 +261,9 @@ void BottleDialog::setInitialData(QSqlRecord rec)
             lineEdit().at(indexOf("WineName"))->setText(query.value("Wine").toString());
         }
         lineEdit().at(indexOf("WineId"))->setText(QString::number(wineId));
+
+        // Update Medals if any
+         on_millesimeComboBox_currentTextChanged(QString::number(millesime));
     }
     fConnectWineId = true;
 }
@@ -283,6 +333,17 @@ void BottleDialog::findWineId()
     else {
          lineEdit().at(indexOf("WineId"))->clear();
     }
+}
+
+void BottleDialog::medalsGroupShow(bool fShow)
+{
+    QGroupBox *group = findChild<QGroupBox *>("medalsGroupBox");
+    group->setVisible(fShow);
+}
+
+QTableView *BottleDialog::prizeView() const
+{
+    return findChild<QTableView *>("medalsView");
 }
 
 
